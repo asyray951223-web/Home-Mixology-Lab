@@ -231,6 +231,7 @@
             tags: "",
             features: "",
             remaining: 100,
+            volume: 750,
           },
           modifierForm: { categoryIndex: 0, name: "", desc: "", tag: "" },
           recipeForm: {
@@ -245,6 +246,7 @@
             amounts: {},
             steps: "",
             tips: "",
+            cost: null,
           },
           noteForm: { id: null, name: "", rating: 0, notes: "" },
 
@@ -2937,6 +2939,65 @@
             this.isRecipeModalOpen = true;
           },
 
+          estimateCost(recipe) {
+            // 1. 檢查手動設定的成本
+            if (recipe && typeof recipe.cost === "number") {
+              return Math.ceil(recipe.cost * this.currentScale);
+            }
+
+            // 2. 若無手動設定，則自動計算
+            if (!recipe || !recipe.ingredients) return 0;
+            let totalCost = 0;
+            
+            // 市場行情預設成本 (NTD/ml) - 當酒櫃找不到時的參考價
+            const defaultCosts = {
+                base: 0.8,    // 一般基酒 (~$600/瓶)
+                liqueur: 1.0, // 利口酒 (~$750/瓶)
+                mixer: 0.15,  // 汽水/通寧水 (~$50/罐)
+                juice: 0.5,   // 新鮮果汁 (~$15/顆)
+                syrup: 0.2,   // 糖漿
+                bitters: 3.0, // 苦精 (用量少單價高)
+                egg: 10,      // 蛋 (單顆)
+                garnish: 2    // 裝飾物
+            };
+
+            recipe.ingredients.forEach(ing => {
+                // 1. 計算份量 (ml)
+                let vol = this.parseVolume(ing.amount, ing.id);
+                
+                // 特殊處理：蛋
+                if (ing.id === 'egg_white' || ing.id === 'egg_whole') {
+                    totalCost += defaultCosts.egg;
+                    return;
+                }
+                
+                // 2. 決定單價 (NTD/ml)
+                let costPerMl = 0;
+                
+                // A. 優先查酒櫃 (取平均價)
+                const myStock = this.myBottles.filter(b => b.typeId === ing.id && b.price);
+                if (myStock.length > 0) {
+                    const avgPrice = myStock.reduce((sum, b) => sum + (parseFloat(b.price) || 0), 0) / myStock.length;
+                    // 假設標準瓶 750ml (若為大瓶裝可自行調整參數，此為估算值)
+                    costPerMl = avgPrice / 750;
+                } else {
+                    // B. 查不到則使用預設估算
+                    if (this.spiritsData.some(s => s.id === ing.id)) costPerMl = defaultCosts.base;
+                    else if (ing.id.includes('liqueur') || ing.id.includes('vermouth') || ing.id === 'campari' || ing.id === 'aperol') costPerMl = defaultCosts.liqueur;
+                    else if (ing.id.includes('juice') || ing.id === 'lemon' || ing.id === 'lime') costPerMl = defaultCosts.juice;
+                    else if (ing.id.includes('syrup') || ing.id === 'sugar' || ing.id === 'honey') costPerMl = defaultCosts.syrup;
+                    else if (ing.id.includes('bitters')) costPerMl = defaultCosts.bitters;
+                    else if (ing.id.includes('soda') || ing.id.includes('tonic') || ing.id.includes('coke') || ing.id.includes('ginger')) costPerMl = defaultCosts.mixer;
+                    else costPerMl = 0.1; // 其他雜項
+                }
+                
+                totalCost += vol * costPerMl;
+            });
+
+            // 乘上目前的份數倍率
+            return Math.ceil(totalCost * this.currentScale);
+          },
+
           get filteredRecipes() {
             let result = this.recipes;
 
@@ -3020,6 +3081,13 @@
             );
           },
 
+          get totalAssetValue() {
+            return this.myBottles.reduce((total, bottle) => {
+                const price = parseFloat(bottle.price);
+                return total + (isNaN(price) ? 0 : price);
+            }, 0);
+          },
+
           getIngredientName(id) {
             let item = this.allIngredientsList.find((i) => i.id === id);
             return item ? item.name : "未知";
@@ -3072,6 +3140,7 @@
               tags: "",
               features: "",
               remaining: 100,
+            volume: 750,
             };
             this.isBottleFormOpen = true;
           },
@@ -3171,6 +3240,7 @@
               amounts: {},
               steps: "",
               tips: "",
+              cost: null,
             };
             this.isRecipeFormOpen = true;
           },
@@ -3193,6 +3263,7 @@
               amounts: amounts,
               steps: recipe.steps.join("\n"),
               tips: recipe.tips,
+              cost: recipe.cost ?? null,
             };
             this.isRecipeFormOpen = true;
           },
@@ -3239,6 +3310,9 @@
               ingredients: ingredientsArray,
               steps: this.recipeForm.steps.split("\n").filter((s) => s.trim()),
               tips: this.recipeForm.tips,
+              cost: !isNaN(parseFloat(this.recipeForm.cost))
+                ? parseFloat(this.recipeForm.cost)
+                : null,
             };
 
             if (this.editingRecipeId) {
@@ -3272,6 +3346,7 @@
               amounts: {},
               steps: "",
               tips: "",
+              cost: null,
             };
             this.$nextTick(() => lucide.createIcons());
           },
@@ -5518,11 +5593,18 @@
             x-cloak
           >
             <div
-              class="flex flex-col md:flex-row justify-between items-center gap-4"
+              class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
             >
-              <h2 class="text-4xl font-black text-slate-900 dark:text-white">
-                我的私人酒櫃
-              </h2>
+              <div>
+                <h2 class="text-4xl font-black text-slate-900 dark:text-white">
+                  我的私人酒櫃
+                </h2>
+                <div x-show="myBottles.length > 0" class="flex items-center gap-2 mt-2 text-slate-500">
+                    <i data-lucide="piggy-bank" class="w-5 h-5"></i>
+                    <span class="font-bold">總資產價值：</span>
+                    <span class="font-black text-amber-600 text-lg" x-text="'$' + totalAssetValue.toLocaleString()"></span>
+                </div>
+              </div>
               <div class="flex gap-3 w-full md:w-auto">
                 <div class="relative flex-1 md:w-64">
                   <i
@@ -5638,8 +5720,10 @@
                         <span
                           class="text-xs font-bold"
                           :class="bottle.remaining < 30 ? 'text-red-500' : 'text-slate-600 dark:text-slate-400'"
-                          x-text="bottle.remaining + '%'"
-                        ></span>
+                        >
+                          <span x-text="bottle.remaining + '%'"></span>
+                          <span class="text-slate-400 font-normal" x-text="' ≈ ' + Math.round((bottle.volume || 750) * bottle.remaining / 100) + 'ml'"></span>
+                        </div>
                       </div>
                       <input
                         type="range"
@@ -6371,12 +6455,13 @@
             <div>
               <label
                 class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2"
-                >保存期限</label
+                >容量 (ml)</label
               >
               <input
-                type="date"
+                type="number"
+                placeholder="750"
                 class="w-full p-3 rounded-2xl border-2 border-slate-100 font-bold text-sm bg-slate-50"
-                x-model="bottleForm.expirationDate"
+                x-model="bottleForm.volume"
               />
             </div>
           </div>
@@ -6664,6 +6749,19 @@
           <div>
             <label
               class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2"
+              >預估成本 (手動覆蓋)</label
+            >
+            <input
+              type="number"
+              placeholder="留空則自動計算"
+              class="w-full p-3 rounded-2xl border-2 border-slate-100 font-bold text-sm bg-slate-50"
+              x-model="recipeForm.cost"
+            />
+          </div>
+
+          <div>
+            <label
+              class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2"
               >特色/簡介</label
             >
             <input
@@ -6845,6 +6943,12 @@
                 x-show="calculateRecipeABV(selectedRecipe) > 0"
                 x-text="'試算: ' + calculateRecipeABV(selectedRecipe) + '%'"
               ></span>
+            </div>
+            <div class="flex items-center gap-1">
+              <i data-lucide="coins" class="w-3 h-3 text-slate-400"></i>
+              <span class="text-slate-500 dark:text-slate-400" 
+                    x-text="'約 $' + estimateCost(selectedRecipe)">
+              </span>
             </div>
             <div class="flex items-center gap-1">
               <i
