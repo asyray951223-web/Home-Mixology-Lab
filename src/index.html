@@ -4786,7 +4786,8 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               <template x-for="recipe in filteredRecipes" :key="recipe.id">
                 <div
-                  class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-slate-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-400 transition-all group h-full flex flex-col"
+                  @click="openRecipeDetail(recipe)"
+                  class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-slate-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-400 transition-all group h-full flex flex-col cursor-pointer hover:scale-[1.02]"
                 >
                   <div class="flex justify-between items-start mb-2">
                     <div
@@ -4796,7 +4797,7 @@
                     </div>
                     <div class="flex items-center gap-2">
                       <button
-                        @click="toggleFavorite(recipe.id)"
+                        @click.stop="toggleFavorite(recipe.id)"
                         class="transition p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
                         :class="favoriteRecipes.includes(recipe.id) ? 'text-red-500' : 'text-slate-300 hover:text-red-400'"
                       >
@@ -4807,7 +4808,7 @@
                         ></i>
                       </button>
                       <button
-                        @click="openNoteModal(recipe)"
+                        @click.stop="openNoteModal(recipe)"
                         class="text-slate-300 hover:text-amber-500 transition p-1 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg"
                         title="評分與筆記"
                       >
@@ -4818,21 +4819,21 @@
                         ></i>
                       </button>
                       <button
-                        @click="shareRecipe(recipe)"
+                        @click.stop="shareRecipe(recipe)"
                         class="text-slate-300 hover:text-blue-500 transition p-1 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg"
                         title="分享酒譜"
                       >
                         <i data-lucide="share-2" class="w-4 h-4"></i>
                       </button>
                       <button
-                        @click="editRecipe(recipe)"
+                        @click.stop="editRecipe(recipe)"
                         class="text-slate-300 hover:text-amber-500 transition p-1 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg"
                         title="編輯酒譜"
                       >
                         <i data-lucide="pencil" class="w-4 h-4"></i>
                       </button>
                       <button
-                        @click="deleteRecipe(recipe.id)"
+                        @click.stop="deleteRecipe(recipe.id)"
                         class="text-slate-300 hover:text-red-500 transition p-1 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg"
                         title="刪除酒譜"
                       >
@@ -5050,7 +5051,8 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               <template x-for="recipe in favoriteRecipeList" :key="recipe.id">
                 <div
-                  class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-slate-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-400 transition-all group h-full flex flex-col"
+                  @click="openRecipeDetail(recipe)"
+                  class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-slate-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-400 transition-all group h-full flex flex-col cursor-pointer hover:scale-[1.02]"
                 >
                   <div class="flex justify-between items-start mb-2">
                     <div
@@ -5060,14 +5062,14 @@
                     </div>
                     <div class="flex items-center gap-2">
                       <button
-                        @click="toggleFavorite(recipe.id)"
+                        @click.stop="toggleFavorite(recipe.id)"
                         class="text-red-500 hover:text-slate-300 transition p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800"
                         title="取消收藏"
                       >
                         <i data-lucide="heart" class="w-5 h-5 fill-current"></i>
                       </button>
                       <button
-                        @click="openNoteModal(recipe)"
+                        @click.stop="openNoteModal(recipe)"
                         class="text-slate-300 hover:text-amber-500 transition p-1 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg"
                         title="評分與筆記"
                       >
@@ -5078,14 +5080,14 @@
                         ></i>
                       </button>
                       <button
-                        @click="shareRecipe(recipe)"
+                        @click.stop="shareRecipe(recipe)"
                         class="text-slate-300 hover:text-blue-500 transition p-1 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg"
                         title="分享酒譜"
                       >
                         <i data-lucide="share-2" class="w-4 h-4"></i>
                       </button>
                       <button
-                        @click="editRecipe(recipe)"
+                        @click.stop="editRecipe(recipe)"
                         class="text-slate-300 hover:text-amber-500 transition p-1 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg"
                       >
                         <i data-lucide="pencil" class="w-4 h-4"></i>
@@ -5239,6 +5241,12 @@
                       ></span>
                     </template>
                   </div>
+                  <button
+                    @click.stop="openRecipeDetail(recipe)"
+                    class="mt-6 w-full py-3 rounded-2xl font-black text-sm transition bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  >
+                    查看詳細步驟
+                  </button>
                 </div>
               </template>
             </div>
@@ -5344,7 +5352,8 @@
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <template x-for="recipe in getReadyRecipes()">
                       <div
-                        class="p-6 rounded-3xl border-2 transition-all flex flex-col justify-between bg-white dark:bg-slate-900 border-green-200 dark:border-green-900 shadow-lg"
+                        @click="openRecipeDetail(recipe)"
+                        class="p-6 rounded-3xl border-2 transition-all flex flex-col justify-between bg-white dark:bg-slate-900 border-green-200 dark:border-green-900 shadow-lg cursor-pointer hover:scale-[1.02]"
                       >
                         <div>
                           <div class="flex justify-between items-start mb-4">
@@ -5366,7 +5375,7 @@
                           </div>
                         </div>
                         <button
-                          @click="openRecipeDetail(recipe)"
+                          @click.stop="openRecipeDetail(recipe)"
                           class="mt-6 w-full py-3 rounded-2xl font-black text-sm transition bg-slate-900 dark:bg-amber-500 dark:text-slate-900 text-white hover:bg-slate-800"
                         >
                           查看詳細步驟
@@ -5387,7 +5396,8 @@
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <template x-for="recipe in getNearMissRecipes()">
                       <div
-                        class="p-6 rounded-3xl border-2 transition-all flex flex-col justify-between bg-amber-50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800"
+                        @click="openRecipeDetail(recipe)"
+                        class="p-6 rounded-3xl border-2 transition-all flex flex-col justify-between bg-amber-50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800 cursor-pointer hover:scale-[1.02]"
                       >
                         <div>
                           <div class="flex justify-between items-start mb-4">
@@ -5418,7 +5428,7 @@
                               ></span>
                             </div>
                             <button
-                              @click="addToShoppingList(recipe.missing)"
+                              @click.stop="addToShoppingList(recipe.missing)"
                               class="text-[10px] bg-amber-100 hover:bg-amber-200 dark:bg-amber-900 dark:hover:bg-amber-800 text-amber-800 dark:text-amber-200 px-2 py-1 rounded-lg font-black transition flex items-center gap-1 shrink-0"
                             >
                               <i data-lucide="plus" class="w-3 h-3"></i>
@@ -5427,7 +5437,7 @@
                           </div>
                         </div>
                         <button
-                          @click="openRecipeDetail(recipe)"
+                          @click.stop="openRecipeDetail(recipe)"
                           class="mt-6 w-full py-3 rounded-2xl font-black text-sm transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                         >
                           查看詳細步驟
@@ -5448,7 +5458,8 @@
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-75">
                     <template x-for="recipe in getOtherRecipes()">
                       <div
-                        class="p-6 rounded-3xl border-2 transition-all flex flex-col justify-between bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                        @click="openRecipeDetail(recipe)"
+                        class="p-6 rounded-3xl border-2 transition-all flex flex-col justify-between bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 cursor-pointer hover:scale-[1.02]"
                       >
                         <div>
                           <div class="flex justify-between items-start mb-4">
@@ -5478,7 +5489,7 @@
                               ></span>
                             </div>
                             <button
-                              @click="addToShoppingList(recipe.missing)"
+                              @click.stop="addToShoppingList(recipe.missing)"
                               class="text-[10px] bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800 text-red-700 dark:text-red-300 px-2 py-1 rounded-lg font-black transition flex items-center gap-1 shrink-0"
                             >
                               <i data-lucide="plus" class="w-3 h-3"></i>
@@ -5487,7 +5498,7 @@
                           </div>
                         </div>
                         <button
-                          @click="openRecipeDetail(recipe)"
+                          @click.stop="openRecipeDetail(recipe)"
                           class="mt-6 w-full py-3 rounded-2xl font-black text-sm transition bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500"
                         >
                           查看詳細步驟
@@ -5874,10 +5885,18 @@
 
                     <div class="flex items-start justify-between">
                       <div class="flex-1 pr-4">
-                        <h4
-                          class="font-black text-xl text-slate-800 dark:text-white mb-1"
-                          x-text="recipe.name"
-                        ></h4>
+                        <div class="flex items-center gap-2 mb-1">
+                          <h4
+                            class="font-black text-xl text-slate-800 dark:text-white"
+                            x-text="recipe.name"
+                          ></h4>
+                          <button
+                            @click.prevent="openRecipeDetail(recipe)"
+                            class="text-slate-400 hover:text-amber-500 p-1"
+                          >
+                            <i data-lucide="info" class="w-4 h-4"></i>
+                          </button>
+                        </div>
                         <p
                           class="text-xs text-slate-500 dark:text-slate-400 font-bold"
                           x-text="recipe.flavor"
@@ -6802,7 +6821,7 @@
               <div
                 class="text-xs font-black text-slate-400 uppercase tracking-widest"
               >
-                Random Pick
+                Recipe Detail
               </div>
               <h3
                 class="text-3xl font-black text-slate-900 dark:text-white"
@@ -7041,5 +7060,7 @@
         </form>
       </div>
     </div>
+  </body>
+</html>
   </body>
 </html>
