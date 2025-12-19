@@ -249,13 +249,9 @@
 
           navigation: [
             { id: "home", label: "首頁", icon: "book-open" },
-            { id: "spirits", label: "六大基酒", icon: "wine" },
-            { id: "modifiers", label: "調味", icon: "leaf" },
-            { id: "recipes", label: "酒譜庫", icon: "search" },
-            { id: "favorites", label: "我的最愛", icon: "heart" },
-            { id: "bar", label: "吧檯", icon: "martini" },
+            { id: "ingredients", label: "調酒材料", icon: "flask-conical" },
+            { id: "laboratory", label: "實驗室", icon: "beaker" },
             { id: "roulette", label: "喝什麼", icon: "dices" },
-            { id: "menu", label: "派對酒單", icon: "clipboard-list" },
             { id: "collection", label: "酒櫃", icon: "archive" },
             { id: "settings", label: "設定", icon: "settings" },
           ],
@@ -269,72 +265,828 @@
 
           spiritsData: [
             {
+              id: "whiskey",
+              name: "威士忌 (Whiskey / Whisky)",
+              title: "第一卷：穀物與時間的藝術",
+              intro:
+                "威士忌是「穀物發酵」後經蒸餾，並在「橡木桶」中陳年的烈酒。其風味公式為：原料 (20%) + 蒸餾 (20%) + 桶陳 (60%)。",
+              icon: "wine",
+              color: "bg-amber-100 text-amber-800",
+              sections: [
+                {
+                  title: "1. 核心原料與化學",
+                  points: [
+                    {
+                      name: "大麥麥芽 (Malted Barley)",
+                      desc: "提供酶（將澱粉轉化為糖）。產生餅乾、堅果、穀物香。",
+                    },
+                    {
+                      name: "泥煤 (Peat)",
+                      desc: "蘇格蘭特產。古代苔蘚植物碳化後的燃料。燃燒燻乾麥芽時，酚類物質 (Phenols) 附著在麥芽上，產生「消毒水、煙燻、培根」味。",
+                    },
+                    {
+                      name: "玉米 (Corn)",
+                      desc: "美國波本主力。產生甜味、奶油、油潤感。",
+                    },
+                    {
+                      name: "裸麥 (Rye)",
+                      desc: "產生辛辣、胡椒、乾燥香料味。",
+                    },
+                  ],
+                },
+                {
+                  title: "2. 兩大主流體系",
+                  subsections: [
+                    {
+                      title: "A. 蘇格蘭威士忌 (Scotch Whisky)",
+                      intro: "必須在蘇格蘭蒸餾、陳年至少三年。",
+                      points: [
+                        {
+                          name: "單一麥芽 (Single Malt)",
+                          desc: "100% 大麥麥芽，單一酒廠生產，使用壺式蒸餾器 (Pot Still)（保留更多雜質與風味）。個性強烈。",
+                        },
+                        {
+                          name: "調和威士忌 (Blended)",
+                          desc: "麥芽威士忌 + 穀物威士忌。強調口感滑順與品質一致性（如 Johnnie Walker）。",
+                        },
+                      ],
+                      notesTitle: "五大產區風格：",
+                      notes: [
+                        "<strong>Islay (艾雷島)</strong>： 重泥煤、海鹽、碘味 (Laphroaig, Ardbeg)。",
+                        "<strong>Speyside (斯佩賽)</strong>： 花果香、優雅甜美 (Macallan, Glenfiddich)。",
+                        "<strong>Highland (高地)</strong>： 風格多變，通常較厚實。",
+                        "<strong>Lowland (低地)</strong>： 輕盈草本，多為三次蒸餾。",
+                        "<strong>Campbeltown (坎貝爾鎮)</strong>： 油潤鹹味。",
+                      ],
+                    },
+                    {
+                      title: "B. 美國威士忌 (American Whiskey)",
+                      points: [
+                        {
+                          name: "波本 (Bourbon)",
+                          desc: "原料 51% 以上玉米，必須使用全新的烘烤橡木桶。風味充滿香草 (Vanillin)、焦糖、椰子味。",
+                        },
+                        {
+                          name: "裸麥 (Rye)",
+                          desc: "原料 51% 以上裸麥。口感銳利、不甜、辛辣。是許多經典調酒 (Manhattan) 的原始基酒。",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
               id: "gin",
               name: "琴酒 (Gin)",
-              engName: "The Perfume of Cocktails",
-              desc: "被稱為「香氣魔術師」。以穀物為基底，將杜松子與各種藥草香料蒸餾而成。",
-              abv: "37.5%-47%",
-              origin: "荷蘭/英國",
-              tags: ["清新", "草本"],
+              title: "第二卷：植物學家的香水",
+              intro:
+                "琴酒本質上是<strong>「加味伏特加」</strong>。它是唯一不依賴陳年，完全靠植物香料 (Botanicals) 決勝負的烈酒。",
+              icon: "wine",
               color: "bg-green-100 text-green-800",
-              icon: "wine",
-            },
-            {
-              id: "vodka",
-              name: "伏特加 (Vodka)",
-              engName: "Pure & Clean",
-              desc: "最純淨的畫布。通常由穀物或馬鈴薯發酵蒸餾，經過多次過濾。",
-              abv: "40%",
-              origin: "俄羅斯/波蘭",
-              tags: ["純淨", "百搭"],
-              color: "bg-blue-100 text-blue-800",
-              icon: "glass-water",
-            },
-            {
-              id: "whiskey",
-              name: "威士忌 (Whiskey)",
-              engName: "Water of Life",
-              desc: "成熟紳士的代名詞。風味涵蓋花果香、焦糖，甚至泥煤煙燻味。",
-              abv: "40%+",
-              origin: "多國",
-              tags: ["濃郁", "木質"],
-              color: "bg-amber-100 text-amber-800",
-              icon: "wine",
+              sections: [
+                {
+                  title: "1. 核心定義",
+                  content:
+                    "基底為中性烈酒 (96% ABV)，必須加入杜松子 (Juniper Berries) 為主調，其他香料隨意。",
+                },
+                {
+                  title: "2. 香氣萃取法 (The Science of Infusion)",
+                  points: [
+                    {
+                      name: "浸泡法 (Steeping/Maceration)",
+                      desc: "將香料泡在酒精裡煮。風味強烈、厚重。",
+                    },
+                    {
+                      name: "蒸氣注入法 (Vapor Infusion / Carter Head Still)",
+                      desc: "將香料放在蒸餾器頂端的「香料籃」，酒精蒸氣通過時帶走香氣。風味極其輕盈、優雅（如 Bombay Sapphire）。",
+                    },
+                  ],
+                },
+                {
+                  title: "3. 四大風格分類",
+                  points: [
+                    {
+                      name: "London Dry Gin (倫敦干型)",
+                      desc: "全球標準。規定蒸餾後不得添加任何糖分或人工香料。杜松子味最重，風格銳利乾淨 (Beefeater, Tanqueray)。",
+                    },
+                    {
+                      name: "Plymouth Gin (普利茅斯)",
+                      desc: "產地保護。帶有泥土氣息，比倫敦型稍微甜潤一點。",
+                    },
+                    {
+                      name: "Old Tom Gin (老湯姆)",
+                      desc: "加了糖的琴酒。流行於 19 世紀，是做 Tom Collins 的正宗選擇。",
+                    },
+                    {
+                      name: "New Western / Modern Gin (現代琴酒)",
+                      desc: "叛逆者。降低杜松子比例，強調花香、柑橘或特殊原料（如小黃瓜、玫瑰）。(Hendrick's, Roku)。",
+                    },
+                  ],
+                },
+              ],
             },
             {
               id: "rum",
               name: "蘭姆酒 (Rum)",
-              engName: "Spirit of the Caribbean",
-              desc: "熱情的甜點師。風味自帶甜感，聞起來有熱帶水果或焦糖香。",
-              abv: "40%+",
-              origin: "加勒比海",
-              tags: ["甜美", "熱帶"],
-              color: "bg-yellow-100 text-yellow-800",
+              title: "第三卷：糖與熱帶的靈魂",
+              intro:
+                "蘭姆酒是甘蔗的產物。它的光譜極廣，從比水還乾淨的白蘭姆，到比醬油還濃的黑蘭姆都有。",
               icon: "wine",
+              color: "bg-yellow-100 text-yellow-800",
+              sections: [
+                {
+                  title: "1. 原料差異 (關鍵分水嶺)",
+                  points: [
+                    {
+                      name: "工業蘭姆酒 (Industrial Rum)",
+                      desc: "95% 的市場主流。使用製糖副產品<strong>「糖蜜 (Molasses)」</strong>發酵。帶有焦糖、太妃糖味。",
+                    },
+                    {
+                      name: "農業蘭姆酒 (Rhum Agricole)",
+                      desc: "法屬島嶼特產。使用<strong>「100% 新鮮甘蔗汁」</strong>發酵。帶有強烈的青草、橄欖、甚至類似汽油的野味。",
+                    },
+                  ],
+                },
+                {
+                  title: "2. 酯類 (Esters) 與發酵",
+                  intro: "蘭姆酒的靈魂在於酯類。",
+                  points: [
+                    {
+                      name: "長時間發酵",
+                      desc: '牙買加 (Jamaica) 的蘭姆酒會讓酵母工作很久，產生大量酯類，形成著名的 "Funk" (發酵水果、熟透香蕉味)。',
+                    },
+                    {
+                      name: "短時間發酵",
+                      desc: "古巴/波多黎各 (Spanish style) 追求快速乾淨，風味清淡。",
+                    },
+                  ],
+                },
+                {
+                  title: "3. 顏色分類學",
+                  points: [
+                    {
+                      name: "White (白)",
+                      desc: "短暫陳年後經活性碳過濾。清爽，做 Mojito。",
+                    },
+                    { name: "Gold (金)", desc: "桶陳約 2-5 年。有些許桶味。" },
+                    {
+                      name: "Dark (黑)",
+                      desc: "重度桶陳或加入焦糖調色。口感濃厚，做 Mai Tai。",
+                    },
+                    { name: "Spiced (香料)", desc: "加入香草、肉桂等香料。" },
+                  ],
+                },
+              ],
             },
             {
               id: "tequila",
               name: "龍舌蘭 (Tequila)",
-              engName: "Soul of Mexico",
-              desc: "狂野的搖滾樂手。只能使用「藍色龍舌蘭」草心釀造。",
-              abv: "35%+",
-              origin: "墨西哥",
-              tags: ["獨特", "派對"],
-              color: "bg-orange-100 text-orange-800",
+              title: "第四卷：沙漠與陽光的血液",
+              intro:
+                "最受法規嚴格保護的烈酒之一。所有的 Tequila 都是 Mezcal，但不是所有的 Mezcal 都是 Tequila。",
               icon: "zap",
+              color: "bg-orange-100 text-orange-800",
+              sections: [
+                {
+                  title: "1. 核心法規 (Appellation of Origin)",
+                  points: [
+                    {
+                      name: "產地",
+                      desc: "必須產自墨西哥五大特定州（核心是 Jalisco）。",
+                    },
+                    {
+                      name: "原料",
+                      desc: '必須含有 51% 以上的藍色韋伯龍舌蘭 (Blue Weber Agave)。優質產品會標示 "100% de Agave"（必選）。',
+                    },
+                  ],
+                },
+                {
+                  title: "2. 關鍵製程：Tequila vs Mezcal",
+                  intro: "這兩者的區別在於「如何煮熟龍舌蘭心 (Piña)」：",
+                  points: [
+                    {
+                      name: "Tequila",
+                      desc: "使用蒸氣（磚造烤爐或高壓釜）。風味是乾淨的草本、柑橘、胡椒味。",
+                    },
+                    {
+                      name: "Mezcal",
+                      desc: "使用土坑悶燒 (Earthen Pit)。木材燃燒的煙霧會滲入果心，產生強烈的煙燻、泥土、橡膠味。",
+                    },
+                  ],
+                },
+                {
+                  title: "3. 陳年分級 (Aging Classifications)",
+                  points: [
+                    {
+                      name: "Blanco / Silver (銀)",
+                      desc: "0 - 2 個月。最能喝出龍舌蘭原本的草味與辛辣。",
+                    },
+                    {
+                      name: "Reposado (微陳)",
+                      desc: "2 個月 - 1 年。在橡木桶稍作停留，顏色淡金，口感變圓潤。最平衡。",
+                    },
+                    {
+                      name: "Añejo (陳年)",
+                      desc: "1 - 3 年。桶味重，像威士忌。",
+                    },
+                    {
+                      name: "Extra Añejo",
+                      desc: "3 年以上。極昂貴，像干邑白蘭地。",
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              id: "vodka",
+              name: "伏特加 (Vodka)",
+              title: "第五卷：純淨的極致",
+              intro:
+                "伏特加在化學上追求的是乙醇的純淨度，在品飲上追求的是質地 (Texture)。",
+              icon: "glass-water",
+              color: "bg-blue-100 text-blue-800",
+              sections: [
+                {
+                  title: "1. 蒸餾邏輯",
+                  content:
+                    "使用連續式蒸餾器 (Column Still) 蒸餾至 95% ABV 以上，去除所有風味雜質 (Congeners)，再加水稀釋。最後經過活性碳 (Charcoal) 或石英過濾，確保無色無味。",
+                },
+                {
+                  title: "2. 原料對口感的影響 (唯一的變數)",
+                  intro: "雖然沒味道，但不同原料會帶來不同的「口感重量」：",
+                  points: [
+                    {
+                      name: "小麥 (Wheat)",
+                      desc: "輕盈、清脆、帶有微弱的麵包甜香 (Absolut, Grey Goose)。",
+                    },
+                    {
+                      name: "裸麥 (Rye)",
+                      desc: "紮實、帶有微弱的辛辣感與堅果味 (Belvedere)。",
+                    },
+                    {
+                      name: "馬鈴薯 (Potato)",
+                      desc: "油潤、奶油感、口感最厚重 (Chopin)。",
+                    },
+                    { name: "玉米 (Corn)", desc: "甜味明顯 (Tito's)。" },
+                  ],
+                },
+              ],
             },
             {
               id: "brandy",
               name: "白蘭地 (Brandy)",
-              engName: "Burnt Wine",
-              desc: "華麗的貴族。口感圓潤，帶有濃縮葡萄果香與花香。",
-              abv: "40%",
-              origin: "法國",
-              tags: ["高貴", "果香"],
-              color: "bg-purple-100 text-purple-800",
+              title: "第六卷：水果的靈魂濃縮",
+              intro:
+                "廣義來說，任何「水果發酵蒸餾酒」都叫白蘭地。但狹義的王者是干邑 (Cognac)。",
               icon: "wine",
+              color: "bg-purple-100 text-purple-800",
+              sections: [
+                {
+                  title: "1. 兩大核心與法規",
+                  intro: "法國針對白蘭地有極嚴格的產區認證 (AOC)。",
+                  subsections: [
+                    {
+                      title: "A. 干邑 (Cognac) — 貴族",
+                      points: [
+                        { name: "產地", desc: "法國干邑區。" },
+                        {
+                          name: "原料",
+                          desc: "白葡萄 (Ugni Blanc 為主)。這種葡萄很酸，做成酒很難喝，但蒸餾後極佳。",
+                        },
+                        {
+                          name: "製程",
+                          desc: "必須使用夏朗德壺式蒸餾器 (Charentais Pot Still) 進行兩次蒸餾。",
+                        },
+                        { name: "風味", desc: "細緻、花香、杏桃、香草。" },
+                      ],
+                    },
+                    {
+                      title: "B. 雅馬邑 (Armagnac) — 騎士",
+                      points: [
+                        { name: "產地", desc: "法國雅馬邑區。" },
+                        {
+                          name: "製程",
+                          desc: "使用小型連續式蒸餾器，一次蒸餾。",
+                        },
+                        {
+                          name: "風味",
+                          desc: "因為只蒸餾一次，保留更多雜質，口感比干邑更粗獷、強壯、帶有梅子與泥土味。",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  title: "2. 陳年分級 (The Codes)",
+                  intro: "這是判讀白蘭地價格的密碼：",
+                  points: [
+                    {
+                      name: "V.S. (Very Special)",
+                      desc: "最年輕的酒液陳年至少 2 年。",
+                    },
+                    {
+                      name: "V.S.O.P. (Very Superior Old Pale)",
+                      desc: "最年輕的酒液陳年至少 4 年。",
+                    },
+                    {
+                      name: "X.O. (Extra Old)",
+                      desc: "最年輕的酒液陳年至少 10 年（舊制為 6 年）。",
+                    },
+                  ],
+                },
+              ],
             },
           ],
+
+          toolsData: [
+            {
+              category: "混合系統 (The Mixing System)",
+              categoryDesc: "這是調酒師的引擎室，負責冷卻、混合與稀釋。",
+              icon: "flask-round",
+              groups: [
+                {
+                  groupName: "1. 雪克杯 (Shakers)",
+                  items: [
+                    {
+                      name: "波士頓雪克杯 (Boston Shaker)",
+                      points: {
+                        構造: "由一個大的金屬杯 (Tin) 和一個小的金屬杯 (Mini Tin) 或玻璃杯組成。",
+                        職業觀點:
+                          "全球專業酒吧首選。金屬對金屬 (Tin on Tin) 的熱傳導最快，冷卻效率最高，且聲音清脆好聽。",
+                        適用: "所有需要搖盪的調酒。",
+                      },
+                    },
+                    {
+                      name: "三段式雪克杯 (Cobbler Shaker)",
+                      points: {
+                        構造: "杯身、自帶濾網的中蓋、小頂蓋。",
+                        職業觀點:
+                          "適合日式調酒 (Hard Shake) 技法。因為造型圓潤，能搖出細緻的碎冰，但氣泡量不如波士頓杯豐富。",
+                        缺點: "熱脹冷縮容易卡死。",
+                      },
+                    },
+                    {
+                      name: "巴黎式雪克杯 (Parisian / French Shaker)",
+                      points: {
+                        構造: "像葫蘆一樣的兩段式金屬杯（沒有濾網）。",
+                        職業觀點:
+                          "最美觀，結合了波士頓的容量與 Cobbler 的線條。但需要另外搭配濾網，使用較少見。",
+                      },
+                    },
+                  ],
+                },
+                {
+                  groupName: "2. 攪拌杯 (Mixing Glass)",
+                  items: [
+                    {
+                      name: "亞萊杯 (Yarai Mixing Glass)",
+                      points: {
+                        特徵: "寬底、有導流嘴、杯身有鑽石切割紋路（防滑）。",
+                        材質: "通常是厚玻璃或水晶。",
+                        職業觀點:
+                          "做 Martini 或 Old Fashioned 專用。厚壁能保持冷度，寬底讓冰塊旋轉順暢。",
+                      },
+                    },
+                    {
+                      name: "金屬攪拌杯 (Metal Mixing Tin)",
+                      points: {
+                        特徵: "不鏽鋼製。",
+                        職業觀點: "降溫極快，不會打破，但無法欣賞液體的顏色。",
+                      },
+                    },
+                  ],
+                },
+                {
+                  groupName: "3. 吧叉匙 (Bar Spoon)",
+                  items: [
+                    {
+                      name: "吧叉匙 (Bar Spoon)",
+                      points: {
+                        構造: "長螺旋柄，一端是湯匙（通常 5ml），另一端可能是叉子（叉水果）、圓餅（搗壓用）或水滴狀（配重）。",
+                        長度: "通常為 30cm - 40cm，甚至 50cm（從杯底輕鬆攪拌）。",
+                        螺旋紋:
+                          "讓手指能順暢轉動，也讓液體能順流而下做分層 (Layering)。",
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              category: "過濾與測量 (Filter & Measure)",
+              categoryDesc: "精準度與口感的守門員。",
+              icon: "ruler",
+              groups: [
+                {
+                  groupName: "1. 濾冰器 (Strainers)",
+                  items: [
+                    {
+                      name: "霍桑隔冰匙 (Hawthorne Strainer)",
+                      points: {
+                        特徵: "扁平金屬板帶有彈簧圈 (Spring)。",
+                        用途: "搭配波士頓雪克杯。彈簧能伸縮適應杯口大小，並過濾掉大冰塊。",
+                        技巧: "推動上面的「滑門 (Gate Control)」可以控制倒出的水流大小與是否讓碎冰通過。",
+                      },
+                    },
+                    {
+                      name: "茱莉普濾網 (Julep Strainer)",
+                      points: {
+                        特徵: "像一個大的多孔湯匙。",
+                        用途: "搭配攪拌杯 (Mixing Glass)。優雅地卡在杯口，適合不含碎冰的攪拌型調酒。",
+                      },
+                    },
+                    {
+                      name: "雙層過濾網 (Fine Mesh Strainer / Tea Strainer)",
+                      points: {
+                        特徵: "錐形的細密濾網。",
+                        用途: "Double Strain (雙重過濾)。放在霍桑隔冰匙下方，濾掉搖盪產生的細小碎冰 (Ice Chips) 和果肉渣，確保口感如絲綢般滑順。",
+                      },
+                    },
+                  ],
+                },
+                {
+                  groupName: "2. 量酒器 (Jigger)",
+                  items: [
+                    {
+                      name: "日式量酒器 (Japanese Style)",
+                      points: {
+                        特徵: "高瘦型，線條優雅。",
+                        優點: "杯口窄，倒酒時即使手抖也不容易灑出來，且刻度精細。",
+                      },
+                    },
+                    {
+                      name: "貝爾量酒器 (Bell Style)",
+                      points: {
+                        特徵: "像鈴鐺一樣圓潤，手感厚實。",
+                        優點: "不易傾倒，且容易清洗。",
+                      },
+                    },
+                    {
+                      name: "多層次量酒器 (Multi-Level / Oxo)",
+                      points: {
+                        特徵: "像量杯一樣有階梯狀刻度。",
+                        優點: "一個抵多個，適合家用。",
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              category: "冰塊處理 (Ice Tools)",
+              categoryDesc: "這是區分玩家與職人的領域。",
+              icon: "ice-cream-2",
+              groups: [
+                {
+                  groupName: "1. 修冰工具",
+                  items: [
+                    {
+                      name: "冰鑿 (Ice Pick)",
+                      points: {
+                        "單叉 (1-point)": "像錐子，用於精細修整或鑿開大冰磚。",
+                        "三叉 (3-point)":
+                          "像爪子，用於將大冰塊快速分裂成直線。",
+                      },
+                    },
+                    {
+                      name: "冰刀 (Ice Knife / Saws)",
+                      points: { 用途: "用於鋸開大塊透明冰磚。" },
+                    },
+                    {
+                      name: "冰鏟 (Ice Scoop)",
+                      points: {
+                        絕對規則:
+                          "永遠不要用玻璃杯去鏟冰！如果不小心破在冰槽裡，你得把整槽冰融掉清創。一定要用不鏽鋼或塑膠冰鏟。",
+                      },
+                    },
+                  ],
+                },
+                {
+                  groupName: "2. 碎冰工具",
+                  items: [
+                    {
+                      name: "路易斯冰袋 (Lewis Bag)",
+                      points: { 材質: "厚帆布袋。", 功能: "用來吸水。" },
+                    },
+                    {
+                      name: "木槌 (Mallet)",
+                      points: {
+                        操作: "把冰塊放進帆布袋，用木槌用力敲打。袋子會吸走融水，給你乾燥的碎冰 (Dry Crushed Ice)，這比果汁機打出來的濕碎冰好用一百倍（做 Mojito 必備）。",
+                      },
+                    },
+                  ],
+                },
+                {
+                  groupName: "3. 冰夾 (Ice Tongs)",
+                  items: [
+                    {
+                      name: "冰夾 (Ice Tongs)",
+                      points: {
+                        用途: "衛生第一，雖然手很乾淨，但客人不想看到你的指紋在冰塊上。",
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              category: "蔬果與裝飾 (Prep & Garnish)",
+              categoryDesc: "處理新鮮材料的利器。",
+              icon: "citrus",
+              groups: [
+                {
+                  groupName: "1. 榨汁與處理",
+                  items: [
+                    {
+                      name: "手壓榨汁器 (Mexican Elbow / Hand Press)",
+                      points: {
+                        特徵: "有黃色(檸檬)與綠色(萊姆)兩種大小。",
+                        優點: "翻過來壓，連皮油一起擠進去，香氣最足。",
+                      },
+                    },
+                    {
+                      name: "搗棒 (Muddler)",
+                      points: {
+                        材質: "木頭（傳統但易發霉）、不鏽鋼+塑膠頭（衛生好清洗）。",
+                        "齒狀 vs 平面":
+                          "齒狀適合壓水果（防滑）；平面適合壓香草（薄荷），因為齒狀容易把葉脈磨碎產生苦味。",
+                      },
+                    },
+                  ],
+                },
+                {
+                  groupName: "2. 刀工與裝飾",
+                  items: [
+                    {
+                      name: "削皮刀 (Y-Peeler)",
+                      points: {
+                        用途: "快速削下厚薄一致的柑橘皮 (Twist)。一定要選刀鋒利的。",
+                      },
+                    },
+                    {
+                      name: "溝紋刀 (Channel Knife)",
+                      points: { 用途: "能削出細細長長的螺旋條狀皮。" },
+                    },
+                    {
+                      name: "吧檯刀 (Paring Knife)",
+                      points: {
+                        特徵: "小而鋒利的水果刀，用於切片、切角、修整果皮邊緣。",
+                      },
+                    },
+                    {
+                      name: "長鑷子 (Garnish Tweezers)",
+                      points: {
+                        用途: "外科手術級的精準度。用來放置微小的花朵、香草或調整冰塊上的裝飾位置。",
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              category: "服務與周邊 (Service & Misc)",
+              categoryDesc: "讓流程順暢的輔助工具。",
+              icon: "concierge-bell",
+              groups: [
+                {
+                  groupName: "1. 注酒器 (Pour Spouts)",
+                  items: [
+                    {
+                      name: "金屬酒嘴 (Speed Pourer)",
+                      points: {
+                        功能: "裝在酒瓶口，提供穩定的流速（通常是「數秒法」計算容量的基礎）。",
+                        結構: "有一個長的倒酒管和一個小的進氣孔。",
+                        防塵蓋: "居家使用建議買有蓋子的，防果蠅。",
+                      },
+                    },
+                  ],
+                },
+                {
+                  groupName: "2. 開瓶器 (Openers)",
+                  items: [
+                    {
+                      name: "酒侍刀 (Waiter's Friend / Wine Key)",
+                      points: {
+                        功能: "結合了螺旋鑽（紅酒）、刀片（割錫箔）和開瓶器（啤酒）。每個調酒師口袋都要有一把。",
+                      },
+                    },
+                    {
+                      name: "V-Rod 開瓶器",
+                      points: {
+                        功能: "一頭開啤酒，另一頭可以用來從酒瓶上拔下卡緊的注酒器。",
+                      },
+                    },
+                  ],
+                },
+                {
+                  groupName: "3. 鹽口盤 (Glass Rimmer)",
+                  items: [
+                    {
+                      name: "鹽口盤 (Glass Rimmer)",
+                      points: {
+                        構造: "三層圓盤，分別裝檸檬汁、鹽、糖。",
+                        用途: "快速製作 Margarita 的鹽口。",
+                        備註: "專業調酒師通常不用這個，而是用檸檬片抹半圈杯口，再撒鹽，這樣更精緻且可控制量。",
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+
+          glasswareData: {
+            intro:
+              "在專業調酒學（Mixology）中，杯具不僅僅是容器，它是<strong>「熱力學的控制器」、「香氣的擴大器」，以及「美學的展示台」</strong>。選錯杯子，會導致氣泡流失過快、溫度失控，甚至讓香氣無法正確傳遞。",
+            functions: [
+              {
+                name: "溫度控制 (Temperature)",
+                desc: "有腳 (Stem) 還是無腳？厚底還是薄壁？決定了手溫傳導的速度。",
+              },
+              {
+                name: "香氣運作 (Aroma)",
+                desc: "杯口是內縮 (聚香) 還是外擴 (散香)？決定了鼻腔接收風味的方式。",
+              },
+              {
+                name: "氣泡保存 (Carbonation)",
+                desc: "杯身是細長 (煙囪效應) 還是寬扁？決定了氣泡存活的時間。",
+              },
+            ],
+            systems: [
+              {
+                name: "第一體系：高腳杯家族 (The Stemmed Family)",
+                logic:
+                  "核心邏輯： 隔離熱源。長腳設計是為了讓手掌遠離酒液，適用於濾掉冰塊的短飲 (Served Up)。",
+                icon: "martini",
+                glasses: [
+                  {
+                    name: "1. 馬丁尼杯 (Martini Glass / V-Shape)",
+                    details: {
+                      構造: "經典的圓錐體 V 字型，長腳。",
+                      物理原理:
+                        "極大化表面積： 寬闊的杯口讓酒液最大程度接觸空氣，使琴酒的杜松子或伏特加的氣息瞬間爆發。\n張力邊緣： 倒滿時液體表面張力極高，視覺張力強。",
+                      缺點: "重心高易翻倒，且極易灑出（移動困難）。",
+                      標準容量: "150ml - 200ml。",
+                      適用: "Dry Martini, Cosmopolitan, Gibson。",
+                    },
+                  },
+                  {
+                    name: "2. 淺碟香檳杯 (Coupe Glass)",
+                    details: {
+                      構造: "寬口、淺底、圓弧狀的碗型 (Bowl)。",
+                      歷史: "傳說是依照瑪麗安東尼皇后的胸型設計的（迷思），早期用於喝香檳，但因氣泡散失太快而被淘汰，轉而成為調酒杯主流。",
+                      物理優勢:
+                        "防灑： 杯緣通常微微內縮 (Tapered Rim)，比 V 型杯更穩。\n承載泡沫： 圓弧底部非常適合承托 Shake 後產生的綿密泡沫 (Foam) 或蛋白霜。",
+                      適用: "Daiquiri, Gimlet, Clover Club, Sidecar。",
+                    },
+                  },
+                  {
+                    name: "3. 尼克與諾拉杯 (Nick & Nora Glass)",
+                    details: {
+                      構造: "介於 V 型和 Coupe 之間，像是一個小鈴鐺，杯壁較直。",
+                      起源: "得名於 1934 年電影《The Thin Man》中的偵探夫妻檔。",
+                      物理優勢:
+                        "溫控王： 容量較小 (約 150-170ml)，表面積小，酒液回溫速度比 Coupe 慢，適合高濃度、需慢慢啜飲的攪拌型調酒。\n精準洗線 (Wash Line)： 倒酒後液面離杯口距離完美，視覺優雅。",
+                      適用: "現代酒吧的 Stirred Drinks (如 Manhattan, Martinez)。",
+                    },
+                  },
+                ],
+              },
+              {
+                name: "第二體系：平底杯家族 (The Tumbler Family)",
+                logic:
+                  "核心邏輯： 容納冰塊與操作。厚底設計允許在杯中直接搗壓 (Muddle) 或構建 (Build)。",
+                icon: "glass-water",
+                glasses: [
+                  {
+                    name: "1. 古典杯 (Old Fashioned Glass / Rocks Glass)",
+                    details: {
+                      介紹: "這是酒吧最忙碌的杯子。",
+                      "Double Rocks (雙份古典杯)":
+                        "構造： 容量約 300-350ml，直身或微寬口。\n功能： 現代主流。專為放入一顆 2吋大冰球 或 大方冰 設計。大冰塊表面積小，融水極慢。",
+                      "Single Rocks (單份古典杯)":
+                        "構造： 容量約 180-240ml。\n功能： 用於純飲烈酒 (Neat) 或不加冰的 Sazerac。",
+                      物理特徵:
+                        "底部非常厚實 (Weighted Base)，除隔熱外，主要為了承受搗棒壓碎糖方或水果的力道。",
+                    },
+                  },
+                  {
+                    name: "2. 烈酒杯 (Shot Glass)",
+                    details: {
+                      構造: "小容量，厚底。",
+                      容量: "Single Shot: 30ml (1 oz)\nDouble Shot: 60ml (2 oz)",
+                      功能: "一口飲盡 (Shooter) 或作為測量工具（在沒有量酒器時）。",
+                    },
+                  },
+                ],
+              },
+              {
+                name: "第三體系：長飲杯家族 (The Highball Family)",
+                logic:
+                  "核心邏輯： 煙囪效應 (Chimney Effect)。專為含氣泡的長飲 (Long Drinks) 設計。",
+                icon: "beer",
+                glasses: [
+                  {
+                    name: "1. 海可波杯 (Highball Glass)",
+                    details: {
+                      構造: "標準直筒狀，高度中等。",
+                      容量: "約 240-300ml。",
+                      物理原理:
+                        "1:3 或 1:4 的酒水比例。適合標準的 Gin Tonic 或 Whiskey Highball。",
+                    },
+                  },
+                  {
+                    name: "2. 可林杯 (Collins Glass)",
+                    details: {
+                      構造: "比 Highball 更高、更窄長。",
+                      容量: "約 300-400ml。",
+                      物理原理:
+                        "更加極端的煙囪效應。氣泡從底部升到頂部的路徑變長，且液體與空氣接觸面積最小，氣泡保存力最強。",
+                      適用: "Tom Collins, Mojito, Long Island Iced Tea。",
+                    },
+                  },
+                  {
+                    name: "3. 司令杯 (Sling Glass)",
+                    details: {
+                      構造: "帶有短腳，杯身向上微寬，流線型。",
+                      適用: "Singapore Sling 或熱帶果汁類長飲。",
+                    },
+                  },
+                ],
+              },
+              {
+                name: "第四體系：特殊功能家族 (Specialty / Functional)",
+                logic: "核心邏輯： 為特定化學反應或文化體驗而生。",
+                icon: "flask-conical",
+                glasses: [
+                  {
+                    name: "1. 銅杯 (Copper Mug)",
+                    details: {
+                      專屬: "Moscow Mule (莫斯科騾子)。",
+                      物理原理:
+                        "熱傳導 (Thermal Conductivity)。銅的導熱係數極高。當冰塊放入，杯壁會瞬間變得冰手，嘴唇接觸時會感到強烈的冰鎮刺激感，這是玻璃無法複製的體驗。",
+                      注意: "現代銅杯內部通常鍍有鎳或不鏽鋼，防止銅中毒。",
+                    },
+                  },
+                  {
+                    name: "2. 茱莉普杯 (Julep Cup)",
+                    details: {
+                      專屬: "Mint Julep。",
+                      構造: "銀製或錫製的梯形杯。",
+                      物理原理:
+                        "同樣利用金屬導熱。傳統上要把碎冰裝到滿出來，杯壁外側會結一層厚厚的白霜 (Beading)，視覺極其消暑。",
+                    },
+                  },
+                  {
+                    name: "3. 颶風杯 (Hurricane Glass)",
+                    details: {
+                      構造: "曲線瓶身，像古早的煤油燈罩。容量巨大 (400ml+)。",
+                      適用: "Tiki (熱帶) 調酒。如 Pina Colada。",
+                      功能: "巨大的容量是為了容納大量的碎冰、多種蘭姆酒與誇張的水果裝飾 (Garnish)。",
+                    },
+                  },
+                  {
+                    name: "4. 聞香杯 (Glencairn Glass / Snifter)",
+                    details: {
+                      "Glencairn (格蘭凱恩)":
+                        "鬱金香形，寬肚縮口。\n功能： 寬肚讓威士忌揮發，縮口將香氣強制集中噴射進鼻腔。品酒 (Tasting) 專用。",
+                      "Snifter (白蘭地球杯)":
+                        "矮腳大肚杯。\n功能： 傳統用法是用掌心托住杯底，利用手溫溫熱白蘭地以釋放香氣（現代觀點認為這會過度揮發酒精，現在多改用鬱金香杯）。",
+                    },
+                  },
+                  {
+                    name: "5. 愛爾蘭咖啡杯 (Irish Coffee Glass)",
+                    details: {
+                      構造: "帶手把的耐熱玻璃杯 (Tempered Glass)。",
+                      功能: "承受熱飲高溫，且透明杯身能展示「黑咖啡 + 白鮮奶油」的分層美學。",
+                    },
+                  },
+                ],
+              },
+              {
+                name: "第五體系：氣泡酒家族 (Sparkling Family)",
+                logic: "核心邏輯： 雖然源自葡萄酒，但在調酒中不可或缺。",
+                icon: "sparkles",
+                glasses: [
+                  {
+                    name: "1. 香檳笛杯 (Champagne Flute)",
+                    details: {
+                      構造: "極細長。",
+                      物理原理: "最小化接觸面積，讓氣泡能持續上升很久。",
+                      適用: "Mimosa, Bellini, French 75。",
+                    },
+                  },
+                  {
+                    name: "2. 香檳碟杯 (Champagne Saucer)",
+                    details: {
+                      說明: "即上述的 Coupe。雖然現在不拿來喝香檳（氣泡跑太快），但它是著名的「香檳塔」專用杯。",
+                    },
+                  },
+                ],
+              },
+            ],
+          },
 
           modifiers: [
             {
@@ -2797,7 +3549,7 @@
     <div class="flex min-h-screen relative">
       <!-- --- 平板/電腦版 側邊選單 --- -->
       <aside
-        class="bg-slate-900 text-white w-72 shrink-0 h-screen sticky top-0 flex-col p-6 hidden md:flex transition-all z-40"
+        class="bg-slate-900 text-white w-72 shrink-0 h-screen top-0 flex-col p-6 flex transition-all z-40 fixed md:sticky"
         x-show="isSidebarOpen"
         x-cloak
         x-transition:enter="transition ease-out duration-300"
@@ -2839,7 +3591,7 @@
           <template x-for="tab in navigation" :key="tab.id">
             <button
               @click="activeTab = tab.id"
-              :class="activeTab === tab.id ? 'bg-amber-500 text-slate-900 shadow-lg' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+              :class="(activeTab === tab.id || (tab.id === 'ingredients' && ['spirits', 'modifiers', 'tools', 'glassware'].includes(activeTab)) || (tab.id === 'laboratory' && ['recipes', 'bar', 'favorites', 'menu'].includes(activeTab))) ? 'bg-amber-500 text-slate-900 shadow-lg' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
               class="w-full px-5 py-4 rounded-2xl font-bold text-sm flex items-center gap-4 transition-all"
             >
               <i :data-lucide="tab.icon" class="w-5 h-5"></i>
@@ -2851,7 +3603,7 @@
 
       <!-- --- 漢堡選單按鈕 (當側邊欄隱藏時顯示) --- -->
       <button
-        class="fixed top-6 left-6 z-50 bg-slate-900 text-white p-3 rounded-xl shadow-xl hidden md:block hover:bg-slate-800 transition hover:scale-110 print:hidden"
+        class="fixed top-6 left-6 z-50 bg-slate-900 text-white p-3 rounded-xl shadow-xl hover:bg-slate-800 transition hover:scale-110 print:hidden"
         x-show="!isSidebarOpen"
         @click="isSidebarOpen = true"
         x-cloak
@@ -2874,7 +3626,7 @@
             x-cloak
           >
             <div
-              class="bg-slate-900 dark:bg-slate-900 text-white rounded-[2rem] p-10 lg:p-16 shadow-2xl relative overflow-hidden flex flex-col lg:flex-row items-center gap-10"
+              class="bg-slate-900 dark:bg-slate-900 text-white rounded-[2rem] p-6 md:p-10 lg:p-16 shadow-2xl relative overflow-hidden flex flex-col lg:flex-row items-center gap-10"
             >
               <div class="relative z-10 flex-1 text-center lg:text-left">
                 <div
@@ -3023,108 +3775,462 @@
             </div>
           </div>
 
+          <!-- === 調酒材料 (Ingredients Hub) === -->
+          <div
+            x-show="activeTab === 'ingredients'"
+            class="space-y-10 animate-fade-in"
+            x-cloak
+          >
+            <div>
+              <h2 class="text-4xl font-black text-slate-900 dark:text-white">
+                調酒材料
+              </h2>
+              <p class="text-slate-500 mt-2 text-lg">
+                工欲善其事，必先利其器。認識這些構成微醺的靈魂元素。
+              </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+              <!-- 六大基酒 Card -->
+              <div
+                @click="activeTab = 'spirits'"
+                class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-400 cursor-pointer group transition-all hover:shadow-xl relative overflow-hidden"
+              >
+                <div
+                  class="absolute top-0 right-0 p-10 opacity-10 group-hover:opacity-20 transition-opacity"
+                >
+                  <i data-lucide="wine" class="w-32 h-32 text-amber-500"></i>
+                </div>
+                <div class="relative z-10">
+                  <div
+                    class="w-14 h-14 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
+                  >
+                    <i data-lucide="wine" class="w-8 h-8"></i>
+                  </div>
+                  <h3
+                    class="text-2xl font-black text-slate-900 dark:text-white mb-2"
+                  >
+                    六大基酒百科
+                  </h3>
+                  <p
+                    class="text-slate-500 dark:text-slate-400 font-medium mb-6"
+                  >
+                    琴酒、伏特加、威士忌、蘭姆酒、龍舌蘭、白蘭地。<br />探索這六位調酒世界的基石。
+                  </p>
+                  <span
+                    class="text-amber-600 dark:text-amber-400 font-bold flex items-center gap-2 group-hover:gap-4 transition-all"
+                  >
+                    前往探索 <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                  </span>
+                </div>
+              </div>
+
+              <!-- 調味與裝飾 Card -->
+              <div
+                @click="activeTab = 'modifiers'"
+                class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800 hover:border-green-400 dark:hover:border-green-400 cursor-pointer group transition-all hover:shadow-xl relative overflow-hidden"
+              >
+                <div
+                  class="absolute top-0 right-0 p-10 opacity-10 group-hover:opacity-20 transition-opacity"
+                >
+                  <i data-lucide="leaf" class="w-32 h-32 text-green-500"></i>
+                </div>
+                <div class="relative z-10">
+                  <div
+                    class="w-14 h-14 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
+                  >
+                    <i data-lucide="leaf" class="w-8 h-8"></i>
+                  </div>
+                  <h3
+                    class="text-2xl font-black text-slate-900 dark:text-white mb-2"
+                  >
+                    調味與裝飾
+                  </h3>
+                  <p
+                    class="text-slate-500 dark:text-slate-400 font-medium mb-6"
+                  >
+                    利口酒、糖漿、果汁、苦精與裝飾物。<br />讓調酒風味與視覺更上一層樓的魔法。
+                  </p>
+                  <span
+                    class="text-green-600 dark:text-green-400 font-bold flex items-center gap-2 group-hover:gap-4 transition-all"
+                  >
+                    前往探索 <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                  </span>
+                </div>
+              </div>
+
+              <!-- 杯具 Card -->
+              <div
+                @click="activeTab = 'glassware'"
+                class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800 hover:border-purple-400 dark:hover:border-purple-400 cursor-pointer group transition-all hover:shadow-xl relative overflow-hidden"
+              >
+                <div
+                  class="absolute top-0 right-0 p-10 opacity-10 group-hover:opacity-20 transition-opacity"
+                >
+                  <i
+                    data-lucide="martini"
+                    class="w-32 h-32 text-purple-500"
+                  ></i>
+                </div>
+                <div class="relative z-10">
+                  <div
+                    class="w-14 h-14 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
+                  >
+                    <i data-lucide="martini" class="w-8 h-8"></i>
+                  </div>
+                  <h3
+                    class="text-2xl font-black text-slate-900 dark:text-white mb-2"
+                  >
+                    杯具百科
+                  </h3>
+                  <p
+                    class="text-slate-500 dark:text-slate-400 font-medium mb-6"
+                  >
+                    杯具是熱力學的控制器、香氣的擴大器，以及美學的展示台。
+                  </p>
+                  <span
+                    class="text-purple-600 dark:text-purple-400 font-bold flex items-center gap-2 group-hover:gap-4 transition-all"
+                  >
+                    前往探索 <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                  </span>
+                </div>
+              </div>
+
+              <!-- 工具 Card -->
+              <div
+                @click="activeTab = 'tools'"
+                class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-400 cursor-pointer group transition-all hover:shadow-xl relative overflow-hidden"
+              >
+                <div
+                  class="absolute top-0 right-0 p-10 opacity-10 group-hover:opacity-20 transition-opacity"
+                >
+                  <i data-lucide="hammer" class="w-32 h-32 text-blue-500"></i>
+                </div>
+                <div class="relative z-10">
+                  <div
+                    class="w-14 h-14 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
+                  >
+                    <i data-lucide="hammer" class="w-8 h-8"></i>
+                  </div>
+                  <h3
+                    class="text-2xl font-black text-slate-900 dark:text-white mb-2"
+                  >
+                    必備工具
+                  </h3>
+                  <p
+                    class="text-slate-500 dark:text-slate-400 font-medium mb-6"
+                  >
+                    雪克杯、量酒器、吧叉匙。<br />工欲善其事，必先利其器。
+                  </p>
+                  <span
+                    class="text-blue-600 dark:text-blue-400 font-bold flex items-center gap-2 group-hover:gap-4 transition-all"
+                  >
+                    前往探索 <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- === 實驗室 (Laboratory Hub) === -->
+          <div
+            x-show="activeTab === 'laboratory'"
+            class="space-y-10 animate-fade-in"
+            x-cloak
+          >
+            <div>
+              <h2 class="text-4xl font-black text-slate-900 dark:text-white">
+                實驗室
+              </h2>
+              <p class="text-slate-500 mt-2 text-lg">
+                這裡是你施展魔法的地方。管理酒譜、庫存與派對酒單。
+              </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              <!-- 酒譜庫 Card -->
+              <div
+                @click="activeTab = 'recipes'"
+                class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-400 cursor-pointer group transition-all hover:shadow-xl relative overflow-hidden"
+              >
+                <div
+                  class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity"
+                >
+                  <i data-lucide="search" class="w-32 h-32 text-amber-500"></i>
+                </div>
+                <div class="relative z-10">
+                  <div
+                    class="w-12 h-12 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+                  >
+                    <i data-lucide="search" class="w-6 h-6"></i>
+                  </div>
+                  <h3
+                    class="text-2xl font-black text-slate-900 dark:text-white mb-2"
+                  >
+                    完整酒譜庫
+                  </h3>
+                  <p
+                    class="text-slate-500 dark:text-slate-400 font-medium mb-4"
+                  >
+                    瀏覽所有經典與現代調酒配方，尋找您的下一杯靈感。
+                  </p>
+                  <span
+                    class="text-amber-600 dark:text-amber-400 font-bold flex items-center gap-2 group-hover:gap-4 transition-all"
+                  >
+                    進入酒譜庫 <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                  </span>
+                </div>
+              </div>
+
+              <!-- 吧檯 Card -->
+              <div
+                @click="activeTab = 'bar'"
+                class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800 hover:border-green-400 dark:hover:border-green-400 cursor-pointer group transition-all hover:shadow-xl relative overflow-hidden"
+              >
+                <div
+                  class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity"
+                >
+                  <i data-lucide="martini" class="w-32 h-32 text-green-500"></i>
+                </div>
+                <div class="relative z-10">
+                  <div
+                    class="w-12 h-12 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+                  >
+                    <i data-lucide="martini" class="w-6 h-6"></i>
+                  </div>
+                  <h3
+                    class="text-2xl font-black text-slate-900 dark:text-white mb-2"
+                  >
+                    我的吧檯
+                  </h3>
+                  <p
+                    class="text-slate-500 dark:text-slate-400 font-medium mb-4"
+                  >
+                    管理現有材料，查看目前可調製的酒譜。
+                  </p>
+                  <span
+                    class="text-green-600 dark:text-green-400 font-bold flex items-center gap-2 group-hover:gap-4 transition-all"
+                  >
+                    進入吧檯 <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                  </span>
+                </div>
+              </div>
+
+              <!-- 我的最愛 Card -->
+              <div
+                @click="activeTab = 'favorites'"
+                class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800 hover:border-red-400 dark:hover:border-red-400 cursor-pointer group transition-all hover:shadow-xl relative overflow-hidden"
+              >
+                <div
+                  class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity"
+                >
+                  <i data-lucide="heart" class="w-32 h-32 text-red-500"></i>
+                </div>
+                <div class="relative z-10">
+                  <div
+                    class="w-12 h-12 bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+                  >
+                    <i data-lucide="heart" class="w-6 h-6"></i>
+                  </div>
+                  <h3
+                    class="text-2xl font-black text-slate-900 dark:text-white mb-2"
+                  >
+                    我的最愛
+                  </h3>
+                  <p
+                    class="text-slate-500 dark:text-slate-400 font-medium mb-4"
+                  >
+                    查看您收藏的精選酒譜清單。
+                  </p>
+                  <span
+                    class="text-red-500 dark:text-red-400 font-bold flex items-center gap-2 group-hover:gap-4 transition-all"
+                  >
+                    查看收藏 <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                  </span>
+                </div>
+              </div>
+
+              <!-- 派對酒單 Card -->
+              <div
+                @click="activeTab = 'menu'"
+                class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-400 cursor-pointer group transition-all hover:shadow-xl relative overflow-hidden"
+              >
+                <div
+                  class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity"
+                >
+                  <i
+                    data-lucide="clipboard-list"
+                    class="w-32 h-32 text-blue-500"
+                  ></i>
+                </div>
+                <div class="relative z-10">
+                  <div
+                    class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-500 dark:text-blue-400 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+                  >
+                    <i data-lucide="clipboard-list" class="w-6 h-6"></i>
+                  </div>
+                  <h3
+                    class="text-2xl font-black text-slate-900 dark:text-white mb-2"
+                  >
+                    派對酒單
+                  </h3>
+                  <p
+                    class="text-slate-500 dark:text-slate-400 font-medium mb-4"
+                  >
+                    從可調製的酒譜中勾選，產生一份專屬的今日特調菜單。
+                  </p>
+                  <span
+                    class="text-blue-500 dark:text-blue-400 font-bold flex items-center gap-2 group-hover:gap-4 transition-all"
+                  >
+                    建立酒單 <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- === 基酒百科 === -->
           <div
             x-show="activeTab === 'spirits'"
-            class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in"
+            class="space-y-12 animate-fade-in"
             x-cloak
           >
-            <div class="md:col-span-full mb-6">
-              <h2
-                class="text-4xl font-black text-slate-900 dark:text-white mb-2"
+            <!-- Header -->
+            <div>
+              <button
+                @click="activeTab = 'ingredients'"
+                class="mb-4 text-slate-500 hover:text-amber-500 font-bold flex items-center gap-1 transition"
               >
-                六大基酒 百科
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> 返回調酒材料
+              </button>
+              <h2 class="text-4xl font-black text-slate-900 dark:text-white">
+                《六大基酒全書》
               </h2>
-              <p class="text-slate-500 text-lg font-medium">
-                調酒世界的六位核心主角，理解它們的個性是創作的第一步。
+              <p class="text-slate-500 mt-2 text-lg">
+                依照國際烈酒認證 (WSET Level 2 Spirits)
+                標準架構，並結合調酒師實務觀點所撰寫的深度解構。
               </p>
             </div>
-            <template x-for="spirit in spiritsData">
+
+            <!-- Loop through spirits -->
+            <template x-for="spirit in spiritsData" :key="spirit.id">
               <div
-                class="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-400 transition-all group"
+                class="space-y-6 pt-8 border-t-2 border-slate-200 dark:border-slate-800"
               >
-                <div class="flex items-start justify-between mb-6">
+                <!-- Spirit Header -->
+                <div class="flex items-center gap-4">
                   <div
-                    class="p-4 rounded-2xl group-hover:scale-110 transition"
+                    class="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0"
                     :class="spirit.color"
                   >
-                    <i :data-lucide="spirit.icon" class="w-6 h-6"></i>
-                  </div>
-                  <div class="flex gap-1 flex-wrap justify-end">
-                    <template x-for="tag in spirit.tags">
-                      <span
-                        class="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2 py-1 rounded-lg font-bold"
-                        x-text="'#'+tag"
-                      ></span>
-                    </template>
-                  </div>
-                </div>
-                <h3
-                  class="text-2xl font-black text-slate-800 dark:text-white"
-                  x-text="spirit.name"
-                ></h3>
-                <p
-                  class="text-xs font-serif italic text-slate-400 mb-4 uppercase tracking-widest"
-                  x-text="spirit.engName"
-                ></p>
-                <p
-                  class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6 h-20 overflow-y-auto custom-scrollbar"
-                  x-text="spirit.desc"
-                ></p>
-                <div
-                  class="grid grid-cols-2 gap-4 text-[10px] border-t border-slate-100 dark:border-slate-800 pt-5"
-                >
-                  <div>
-                    <span
-                      class="text-slate-400 font-bold flex items-center gap-1 uppercase tracking-tighter"
-                      ><i data-lucide="flame" class="w-3 h-3"></i> ABV</span
-                    >
-                    <span
-                      class="font-black text-slate-700 dark:text-slate-200 text-sm"
-                      x-text="spirit.abv"
-                    ></span>
+                    <i :data-lucide="spirit.icon" class="w-8 h-8"></i>
                   </div>
                   <div>
-                    <span
-                      class="text-slate-400 font-bold flex items-center gap-1 uppercase tracking-tighter"
-                      ><i data-lucide="map-pin" class="w-3 h-3"></i>
-                      Origin</span
-                    >
-                    <span
-                      class="font-black text-slate-700 dark:text-slate-200 text-sm"
-                      x-text="spirit.origin"
-                    ></span>
+                    <h3
+                      class="text-2xl font-black text-slate-800 dark:text-white"
+                      x-text="spirit.title"
+                    ></h3>
+                    <p
+                      class="text-slate-500 dark:text-slate-400 font-bold"
+                      x-text="spirit.name"
+                    ></p>
                   </div>
                 </div>
+                <p
+                  class="text-slate-600 dark:text-slate-400 leading-relaxed text-base"
+                  x-html="spirit.intro"
+                ></p>
 
-                <div
-                  class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between"
-                >
-                  <div class="flex items-center gap-2">
-                    <div x-show="myBottles.some(b => b.typeId === spirit.id)">
-                      <span
-                        class="text-xs font-bold text-green-600 dark:text-green-400 flex items-center gap-1"
-                      >
-                        <i data-lucide="check-circle" class="w-4 h-4"></i>
-                        已收藏
-                      </span>
+                <!-- Loop through sections -->
+                <div class="pl-0 md:pl-8 space-y-8">
+                  <template x-for="section in spirit.sections">
+                    <div class="space-y-4">
+                      <h4
+                        class="text-xl font-bold text-slate-700 dark:text-slate-300"
+                        x-text="section.title"
+                      ></h4>
+                      <p
+                        x-show="section.content"
+                        x-html="section.content"
+                        class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm"
+                      ></p>
+                      <p
+                        x-show="section.intro"
+                        x-html="section.intro"
+                        class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm"
+                      ></p>
+
+                      <!-- Points -->
+                      <dl x-show="section.points" class="space-y-3 text-sm">
+                        <template x-for="point in section.points">
+                          <div class="flex flex-col md:flex-row gap-1 md:gap-3">
+                            <dt
+                              class="font-bold text-amber-600 dark:text-amber-400 shrink-0 md:w-40 md:text-right"
+                              x-text="point.name"
+                            ></dt>
+                            <dd
+                              class="text-slate-600 dark:text-slate-400 leading-relaxed md:pl-3 md:border-l-2 md:border-slate-200 dark:md:border-slate-700"
+                              x-html="point.desc"
+                            ></dd>
+                          </div>
+                        </template>
+                      </dl>
+
+                      <!-- Subsections -->
+                      <div x-show="section.subsections" class="space-y-6">
+                        <template x-for="subsection in section.subsections">
+                          <div
+                            class="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-800"
+                          >
+                            <h5
+                              class="text-lg font-black text-slate-800 dark:text-white mb-3"
+                              x-text="subsection.title"
+                            ></h5>
+                            <p
+                              x-show="subsection.intro"
+                              x-html="subsection.intro"
+                              class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm mb-3"
+                            ></p>
+                            <dl
+                              x-show="subsection.points"
+                              class="space-y-3 text-sm"
+                            >
+                              <template x-for="point in subsection.points">
+                                <div
+                                  class="flex flex-col md:flex-row gap-1 md:gap-3"
+                                >
+                                  <dt
+                                    class="font-bold text-amber-600 dark:text-amber-400 shrink-0 md:w-32 md:text-right"
+                                    x-text="point.name"
+                                  ></dt>
+                                  <dd
+                                    class="text-slate-600 dark:text-slate-400 leading-relaxed"
+                                    x-html="point.desc"
+                                  ></dd>
+                                </div>
+                              </template>
+                            </dl>
+                            <div
+                              x-show="subsection.notes"
+                              class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700"
+                            >
+                              <h6
+                                class="text-sm font-bold text-slate-500 dark:text-slate-400 mb-2"
+                                x-text="subsection.notesTitle || '註記：'"
+                              ></h6>
+                              <ul
+                                class="list-disc list-inside space-y-1 text-sm text-slate-600 dark:text-slate-400"
+                              >
+                                <template x-for="note in subsection.notes">
+                                  <li x-html="note"></li>
+                                </template>
+                              </ul>
+                            </div>
+                          </div>
+                        </template>
+                      </div>
                     </div>
-                    <div x-show="!myBottles.some(b => b.typeId === spirit.id)">
-                      <span class="text-xs font-bold text-slate-400"
-                        >尚未收藏</span
-                      >
-                    </div>
-                  </div>
-                  <button
-                    @click="openAddBottleModal(spirit.id)"
-                    class="px-4 py-2 rounded-xl text-xs font-black transition-colors flex items-center gap-2"
-                    :class="myBottles.some(b => b.typeId === spirit.id) ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700' : 'bg-amber-500 text-slate-900 hover:bg-amber-400 shadow-lg shadow-amber-500/20'"
-                  >
-                    <i data-lucide="plus" class="w-3 h-3"></i>
-                    <span
-                      x-text="myBottles.some(b => b.typeId === spirit.id) ? '再入庫' : '加入酒櫃'"
-                    ></span>
-                  </button>
+                  </template>
                 </div>
               </div>
             </template>
@@ -3136,6 +4242,12 @@
             class="space-y-6 animate-fade-in"
             x-cloak
           >
+            <button
+              @click="activeTab = 'ingredients'"
+              class="text-slate-500 hover:text-amber-500 font-bold flex items-center gap-1 transition"
+            >
+              <i data-lucide="arrow-left" class="w-4 h-4"></i> 返回調酒材料
+            </button>
             <div
               class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
             >
@@ -3212,12 +4324,223 @@
             </template>
           </div>
 
+          <!-- === 工具百科 === -->
+          <div
+            x-show="activeTab === 'tools'"
+            class="space-y-12 animate-fade-in"
+            x-cloak
+          >
+            <div>
+              <button
+                @click="activeTab = 'ingredients'"
+                class="mb-4 text-slate-500 hover:text-amber-500 font-bold flex items-center gap-1 transition"
+              >
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> 返回調酒材料
+              </button>
+              <h2
+                class="text-4xl font-black text-slate-900 dark:text-white mb-2"
+              >
+                調酒工具全書
+              </h2>
+              <p class="text-slate-500 text-lg font-medium">
+                地毯式的調酒工具清單，涵蓋從基礎操作到進階職人所需的每一項裝備。
+              </p>
+            </div>
+
+            <template x-for="(arsenal, index) in toolsData" :key="index">
+              <div class="space-y-8">
+                <!-- Arsenal Header -->
+                <div
+                  class="flex items-center gap-4 pb-4 border-b-2 border-dashed border-slate-200 dark:border-slate-800"
+                >
+                  <div
+                    class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center shrink-0"
+                  >
+                    <i
+                      :data-lucide="arsenal.icon"
+                      class="w-8 h-8 text-amber-500"
+                    ></i>
+                  </div>
+                  <div>
+                    <h3
+                      class="text-2xl font-black text-slate-800 dark:text-white"
+                      x-text="arsenal.category"
+                    ></h3>
+                    <p
+                      class="text-slate-500 dark:text-slate-400"
+                      x-text="arsenal.categoryDesc"
+                    ></p>
+                  </div>
+                </div>
+
+                <!-- Groups in Arsenal -->
+                <div class="space-y-8">
+                  <template x-for="group in arsenal.groups">
+                    <div class="pl-0 md:pl-8">
+                      <h4
+                        class="text-xl font-bold text-slate-700 dark:text-slate-300 mb-4"
+                        x-text="group.groupName"
+                      ></h4>
+                      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <template x-for="tool in group.items">
+                          <div
+                            class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col"
+                          >
+                            <h5
+                              class="text-lg font-black text-slate-900 dark:text-white mb-4"
+                              x-text="tool.name"
+                            ></h5>
+                            <dl class="space-y-3 text-xs">
+                              <template x-for="(text, label) in tool.points">
+                                <div class="flex gap-3">
+                                  <dt
+                                    class="font-bold text-amber-600 dark:text-amber-400 shrink-0 w-16 text-right"
+                                    x-text="label"
+                                  ></dt>
+                                  <dd
+                                    class="text-slate-600 dark:text-slate-400 leading-relaxed"
+                                    x-text="text"
+                                  ></dd>
+                                </div>
+                              </template>
+                            </dl>
+                          </div>
+                        </template>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <!-- === 杯具百科 === -->
+          <div
+            x-show="activeTab === 'glassware'"
+            class="space-y-12 animate-fade-in"
+            x-cloak
+          >
+            <!-- Header -->
+            <div>
+              <button
+                @click="activeTab = 'ingredients'"
+                class="mb-4 text-slate-500 hover:text-amber-500 font-bold flex items-center gap-1 transition"
+              >
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> 返回調酒材料
+              </button>
+              <h2 class="text-4xl font-black text-slate-900 dark:text-white">
+                杯具百科全書
+              </h2>
+              <p
+                class="text-slate-500 mt-2 text-lg"
+                x-html="glasswareData.intro"
+              ></p>
+            </div>
+
+            <!-- Intro -->
+            <div
+              class="p-6 md:p-8 bg-white dark:bg-slate-900 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800"
+            >
+              <h3
+                class="text-xl font-black text-slate-800 dark:text-white mb-4"
+              >
+                導論：杯具的三大物理功能
+              </h3>
+              <div class="grid md:grid-cols-3 gap-6">
+                <template x-for="func in glasswareData.functions">
+                  <div class="flex items-start gap-3">
+                    <div
+                      class="w-8 h-8 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center shrink-0 mt-1"
+                    >
+                      <i data-lucide="check" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                      <h4
+                        class="font-bold text-slate-700 dark:text-slate-200"
+                        x-text="func.name"
+                      ></h4>
+                      <p
+                        class="text-xs text-slate-500 dark:text-slate-400"
+                        x-text="func.desc"
+                      ></p>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- Loop through systems -->
+            <template
+              x-for="system in glasswareData.systems"
+              :key="system.name"
+            >
+              <div class="space-y-8">
+                <!-- System Header -->
+                <div
+                  class="flex items-center gap-4 pb-4 border-b-2 border-dashed border-slate-200 dark:border-slate-800"
+                >
+                  <div
+                    class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center shrink-0"
+                  >
+                    <i
+                      :data-lucide="system.icon"
+                      class="w-8 h-8 text-amber-500"
+                    ></i>
+                  </div>
+                  <div>
+                    <h3
+                      class="text-2xl font-black text-slate-800 dark:text-white"
+                      x-text="system.name"
+                    ></h3>
+                    <p
+                      class="text-slate-500 dark:text-slate-400"
+                      x-text="system.logic"
+                    ></p>
+                  </div>
+                </div>
+                <!-- Glasses in System -->
+                <div class="pl-0 md:pl-8 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <template x-for="glass in system.glasses">
+                    <div
+                      class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col"
+                    >
+                      <h5
+                        class="text-lg font-black text-slate-900 dark:text-white mb-4"
+                        x-text="glass.name"
+                      ></h5>
+                      <dl class="space-y-3 text-xs">
+                        <template x-for="(text, label) in glass.details">
+                          <div class="flex gap-3">
+                            <dt
+                              class="font-bold text-amber-600 dark:text-amber-400 shrink-0 w-16 text-right"
+                              x-text="label"
+                            ></dt>
+                            <dd
+                              class="text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-line"
+                              x-text="text"
+                            ></dd>
+                          </div>
+                        </template>
+                      </dl>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </template>
+          </div>
+
           <!-- === 酒譜庫 === -->
           <div
             x-show="activeTab === 'recipes'"
             class="space-y-8 animate-fade-in"
             x-cloak
           >
+            <button
+              @click="activeTab = 'laboratory'"
+              class="text-slate-500 hover:text-amber-500 font-bold flex items-center gap-1 transition"
+            >
+              <i data-lucide="arrow-left" class="w-4 h-4"></i> 返回實驗室
+            </button>
             <div
               class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
             >
@@ -3531,6 +4854,12 @@
             class="space-y-8 animate-fade-in"
             x-cloak
           >
+            <button
+              @click="activeTab = 'laboratory'"
+              class="text-slate-500 hover:text-amber-500 font-bold flex items-center gap-1 transition"
+            >
+              <i data-lucide="arrow-left" class="w-4 h-4"></i> 返回實驗室
+            </button>
             <div
               class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
             >
@@ -3763,243 +5092,254 @@
           <!-- === 吧檯 === -->
           <div
             x-show="activeTab === 'bar'"
-            class="grid xl:grid-cols-4 gap-8 animate-fade-in"
+            class="space-y-6 animate-fade-in"
             x-cloak
           >
-            <div class="xl:col-span-1 space-y-4">
-              <div
-                class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 static xl:sticky xl:top-10"
-              >
+            <button
+              @click="activeTab = 'laboratory'"
+              class="text-slate-500 hover:text-amber-500 font-bold flex items-center gap-1 transition"
+            >
+              <i data-lucide="arrow-left" class="w-4 h-4"></i> 返回實驗室
+            </button>
+            <div class="grid xl:grid-cols-4 gap-8">
+              <div class="xl:col-span-1 space-y-4">
                 <div
-                  class="flex justify-between items-center mb-4 border-b pb-4"
+                  class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 static xl:sticky xl:top-10"
                 >
-                  <h3 class="font-black flex items-center gap-2 text-xl">
-                    <i data-lucide="check" class="text-green-500"></i> 我的吧檯
+                  <div
+                    class="flex justify-between items-center mb-4 border-b pb-4"
+                  >
+                    <h3 class="font-black flex items-center gap-2 text-xl">
+                      <i data-lucide="check" class="text-green-500"></i>
+                      我的吧檯
+                    </h3>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-2 mb-6">
+                    <button
+                      @click="openAddBottleModal()"
+                      class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 py-2 rounded-xl text-xs font-black flex items-center justify-center gap-1 transition"
+                    >
+                      <i data-lucide="wine" class="w-3 h-3"></i> + 酒藏
+                    </button>
+                    <button
+                      @click="isModifierFormOpen = true"
+                      class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 py-2 rounded-xl text-xs font-black flex items-center justify-center gap-1 transition"
+                    >
+                      <i data-lucide="leaf" class="w-3 h-3"></i> + 調味
+                    </button>
+                  </div>
+
+                  <div
+                    class="space-y-8 overflow-y-auto max-h-[60vh] pr-2 custom-scrollbar"
+                  >
+                    <template
+                      x-for="(items, category) in getRecipeIngredientsGrouped()"
+                      :key="category"
+                    >
+                      <div>
+                        <h4
+                          class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3"
+                          x-text="category"
+                        ></h4>
+                        <div class="space-y-1.5">
+                          <template x-for="item in items" :key="item.id">
+                            <label
+                              class="flex items-center space-x-3 cursor-pointer p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition group"
+                            >
+                              <div
+                                class="w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all"
+                                :class="myIngredients.includes(item.id) ? 'bg-amber-500 border-amber-500 text-slate-900 shadow-lg' : 'border-slate-200 dark:border-slate-700'"
+                              >
+                                <i
+                                  x-show="myIngredients.includes(item.id)"
+                                  data-lucide="check"
+                                  class="w-3 h-3 stroke-[4]"
+                                ></i>
+                              </div>
+                              <input
+                                type="checkbox"
+                                class="hidden"
+                                :value="item.id"
+                                @change="toggleIngredient(item.id)"
+                                :checked="myIngredients.includes(item.id)"
+                              />
+                              <span
+                                class="text-sm font-bold"
+                                :class="myIngredients.includes(item.id) ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-500'"
+                                x-text="item.name"
+                              ></span>
+                            </label>
+                          </template>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </div>
+              <div class="xl:col-span-3 space-y-12">
+                <!-- Ready to Drink -->
+                <div x-show="getReadyRecipes().length > 0">
+                  <h3
+                    class="font-black flex items-center gap-3 text-2xl mb-6 text-green-600 dark:text-green-400"
+                  >
+                    <i data-lucide="party-popper"></i>
+                    現有材料可調製
                   </h3>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <template x-for="recipe in getReadyRecipes()">
+                      <div
+                        class="p-6 rounded-3xl border-2 transition-all flex flex-col justify-between bg-white dark:bg-slate-900 border-green-200 dark:border-green-900 shadow-lg"
+                      >
+                        <div>
+                          <div class="flex justify-between items-start mb-4">
+                            <div>
+                              <h4
+                                class="font-black text-xl text-slate-800 dark:text-white"
+                                x-text="recipe.name"
+                              ></h4>
+                              <p
+                                class="text-xs text-slate-500 font-bold"
+                                x-text="recipe.flavor"
+                              ></p>
+                            </div>
+                            <div
+                              class="bg-green-500 text-white text-[10px] font-black px-3 py-1 rounded-full"
+                            >
+                              Ready
+                            </div>
+                          </div>
+                        </div>
+                        <button
+                          @click="selectedRecipe = recipe; isRecipeModalOpen = true"
+                          class="mt-6 w-full py-3 rounded-2xl font-black text-sm transition bg-slate-900 dark:bg-amber-500 dark:text-slate-900 text-white hover:bg-slate-800"
+                        >
+                          查看詳細步驟
+                        </button>
+                      </div>
+                    </template>
+                  </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2 mb-6">
-                  <button
-                    @click="openAddBottleModal()"
-                    class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 py-2 rounded-xl text-xs font-black flex items-center justify-center gap-1 transition"
+                <!-- Near Miss -->
+                <div x-show="getNearMissRecipes().length > 0">
+                  <h3
+                    class="font-black flex items-center gap-3 text-2xl mb-6 text-amber-600 dark:text-amber-400"
                   >
-                    <i data-lucide="wine" class="w-3 h-3"></i> + 酒藏
-                  </button>
-                  <button
-                    @click="isModifierFormOpen = true"
-                    class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 py-2 rounded-xl text-xs font-black flex items-center justify-center gap-1 transition"
-                  >
-                    <i data-lucide="leaf" class="w-3 h-3"></i> + 調味
-                  </button>
-                </div>
-
-                <div
-                  class="space-y-8 overflow-y-auto max-h-[60vh] pr-2 custom-scrollbar"
-                >
-                  <template
-                    x-for="(items, category) in getRecipeIngredientsGrouped()"
-                    :key="category"
-                  >
-                    <div>
-                      <h4
-                        class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3"
-                        x-text="category"
-                      ></h4>
-                      <div class="space-y-1.5">
-                        <template x-for="item in items" :key="item.id">
-                          <label
-                            class="flex items-center space-x-3 cursor-pointer p-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl transition group"
+                    <i data-lucide="sparkles"></i>
+                    只缺一項！推薦嘗試
+                  </h3>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <template x-for="recipe in getNearMissRecipes()">
+                      <div
+                        class="p-6 rounded-3xl border-2 transition-all flex flex-col justify-between bg-amber-50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800"
+                      >
+                        <div>
+                          <div class="flex justify-between items-start mb-4">
+                            <div>
+                              <h4
+                                class="font-black text-xl text-slate-800 dark:text-white"
+                                x-text="recipe.name"
+                              ></h4>
+                              <p
+                                class="text-xs text-slate-500 font-bold"
+                                x-text="recipe.flavor"
+                              ></p>
+                            </div>
+                            <div
+                              class="bg-amber-400 text-white text-[10px] font-black px-3 py-1 rounded-full"
+                            >
+                              缺 1 項
+                            </div>
+                          </div>
+                          <div
+                            class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-amber-100 dark:border-amber-900 flex justify-between items-center gap-2"
                           >
                             <div
-                              class="w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all"
-                              :class="myIngredients.includes(item.id) ? 'bg-amber-500 border-amber-500 text-slate-900 shadow-lg' : 'border-slate-200 dark:border-slate-700'"
+                              class="text-xs font-bold text-amber-600 dark:text-amber-400"
                             >
-                              <i
-                                x-show="myIngredients.includes(item.id)"
-                                data-lucide="check"
-                                class="w-3 h-3 stroke-[4]"
-                              ></i>
+                              缺少：<span
+                                x-text="getMissingNames(recipe.missing)"
+                              ></span>
                             </div>
-                            <input
-                              type="checkbox"
-                              class="hidden"
-                              :value="item.id"
-                              @change="toggleIngredient(item.id)"
-                              :checked="myIngredients.includes(item.id)"
-                            />
-                            <span
-                              class="text-sm font-bold"
-                              :class="myIngredients.includes(item.id) ? 'text-slate-900 dark:text-white' : 'text-slate-500 dark:text-slate-500'"
-                              x-text="item.name"
-                            ></span>
-                          </label>
-                        </template>
-                      </div>
-                    </div>
-                  </template>
-                </div>
-              </div>
-            </div>
-            <div class="xl:col-span-3 space-y-12">
-              <!-- Ready to Drink -->
-              <div x-show="getReadyRecipes().length > 0">
-                <h3
-                  class="font-black flex items-center gap-3 text-2xl mb-6 text-green-600 dark:text-green-400"
-                >
-                  <i data-lucide="party-popper"></i>
-                  現有材料可調製
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <template x-for="recipe in getReadyRecipes()">
-                    <div
-                      class="p-6 rounded-3xl border-2 transition-all flex flex-col justify-between bg-white dark:bg-slate-900 border-green-200 dark:border-green-900 shadow-lg"
-                    >
-                      <div>
-                        <div class="flex justify-between items-start mb-4">
-                          <div>
-                            <h4
-                              class="font-black text-xl text-slate-800 dark:text-white"
-                              x-text="recipe.name"
-                            ></h4>
-                            <p
-                              class="text-xs text-slate-500 font-bold"
-                              x-text="recipe.flavor"
-                            ></p>
-                          </div>
-                          <div
-                            class="bg-green-500 text-white text-[10px] font-black px-3 py-1 rounded-full"
-                          >
-                            Ready
+                            <button
+                              @click="addToShoppingList(recipe.missing)"
+                              class="text-[10px] bg-amber-100 hover:bg-amber-200 dark:bg-amber-900 dark:hover:bg-amber-800 text-amber-800 dark:text-amber-200 px-2 py-1 rounded-lg font-black transition flex items-center gap-1 shrink-0"
+                            >
+                              <i data-lucide="plus" class="w-3 h-3"></i>
+                              加入清單
+                            </button>
                           </div>
                         </div>
-                      </div>
-                      <button
-                        @click="selectedRecipe = recipe; isRecipeModalOpen = true"
-                        class="mt-6 w-full py-3 rounded-2xl font-black text-sm transition bg-slate-900 dark:bg-amber-500 dark:text-slate-900 text-white hover:bg-slate-800"
-                      >
-                        查看詳細步驟
-                      </button>
-                    </div>
-                  </template>
-                </div>
-              </div>
-
-              <!-- Near Miss -->
-              <div x-show="getNearMissRecipes().length > 0">
-                <h3
-                  class="font-black flex items-center gap-3 text-2xl mb-6 text-amber-600 dark:text-amber-400"
-                >
-                  <i data-lucide="sparkles"></i>
-                  只缺一項！推薦嘗試
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <template x-for="recipe in getNearMissRecipes()">
-                    <div
-                      class="p-6 rounded-3xl border-2 transition-all flex flex-col justify-between bg-amber-50 dark:bg-amber-900/10 border-amber-200 dark:border-amber-800"
-                    >
-                      <div>
-                        <div class="flex justify-between items-start mb-4">
-                          <div>
-                            <h4
-                              class="font-black text-xl text-slate-800 dark:text-white"
-                              x-text="recipe.name"
-                            ></h4>
-                            <p
-                              class="text-xs text-slate-500 font-bold"
-                              x-text="recipe.flavor"
-                            ></p>
-                          </div>
-                          <div
-                            class="bg-amber-400 text-white text-[10px] font-black px-3 py-1 rounded-full"
-                          >
-                            缺 1 項
-                          </div>
-                        </div>
-                        <div
-                          class="bg-white dark:bg-slate-900 p-3 rounded-xl border border-amber-100 dark:border-amber-900 flex justify-between items-center gap-2"
+                        <button
+                          @click="selectedRecipe = recipe; isRecipeModalOpen = true"
+                          class="mt-6 w-full py-3 rounded-2xl font-black text-sm transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                         >
-                          <div
-                            class="text-xs font-bold text-amber-600 dark:text-amber-400"
-                          >
-                            缺少：<span
-                              x-text="getMissingNames(recipe.missing)"
-                            ></span>
-                          </div>
-                          <button
-                            @click="addToShoppingList(recipe.missing)"
-                            class="text-[10px] bg-amber-100 hover:bg-amber-200 dark:bg-amber-900 dark:hover:bg-amber-800 text-amber-800 dark:text-amber-200 px-2 py-1 rounded-lg font-black transition flex items-center gap-1 shrink-0"
-                          >
-                            <i data-lucide="plus" class="w-3 h-3"></i> 加入清單
-                          </button>
-                        </div>
+                          查看詳細步驟
+                        </button>
                       </div>
-                      <button
-                        @click="selectedRecipe = recipe; isRecipeModalOpen = true"
-                        class="mt-6 w-full py-3 rounded-2xl font-black text-sm transition bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
-                      >
-                        查看詳細步驟
-                      </button>
-                    </div>
-                  </template>
+                    </template>
+                  </div>
                 </div>
-              </div>
 
-              <!-- Others -->
-              <div x-show="getOtherRecipes().length > 0">
-                <h3
-                  class="font-black flex items-center gap-3 text-xl mb-6 text-slate-500"
-                >
-                  <i data-lucide="search"></i>
-                  探索更多酒譜
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-75">
-                  <template x-for="recipe in getOtherRecipes()">
-                    <div
-                      class="p-6 rounded-3xl border-2 transition-all flex flex-col justify-between bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
-                    >
-                      <div>
-                        <div class="flex justify-between items-start mb-4">
-                          <div>
-                            <h4
-                              class="font-black text-xl text-slate-800 dark:text-white"
-                              x-text="recipe.name"
-                            ></h4>
-                            <p
-                              class="text-xs text-slate-500 font-bold"
-                              x-text="recipe.flavor"
-                            ></p>
-                          </div>
-                          <div
-                            class="bg-slate-300 text-slate-700 text-[10px] font-black px-3 py-1 rounded-full"
-                            x-text="'缺 ' + recipe.missing.length + ' 項'"
-                          ></div>
-                        </div>
-                        <div
-                          class="bg-red-50 dark:bg-red-900/20 p-3 rounded-xl border border-red-100 dark:border-red-900 flex justify-between items-center gap-2"
-                        >
-                          <div
-                            class="text-xs font-bold text-red-600 dark:text-red-400"
-                          >
-                            缺少：<span
-                              x-text="getMissingNames(recipe.missing)"
-                            ></span>
-                          </div>
-                          <button
-                            @click="addToShoppingList(recipe.missing)"
-                            class="text-[10px] bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800 text-red-700 dark:text-red-300 px-2 py-1 rounded-lg font-black transition flex items-center gap-1 shrink-0"
-                          >
-                            <i data-lucide="plus" class="w-3 h-3"></i> 加入清單
-                          </button>
-                        </div>
-                      </div>
-                      <button
-                        @click="selectedRecipe = recipe; isRecipeModalOpen = true"
-                        class="mt-6 w-full py-3 rounded-2xl font-black text-sm transition bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500"
+                <!-- Others -->
+                <div x-show="getOtherRecipes().length > 0">
+                  <h3
+                    class="font-black flex items-center gap-3 text-xl mb-6 text-slate-500"
+                  >
+                    <i data-lucide="search"></i>
+                    探索更多酒譜
+                  </h3>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 opacity-75">
+                    <template x-for="recipe in getOtherRecipes()">
+                      <div
+                        class="p-6 rounded-3xl border-2 transition-all flex flex-col justify-between bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
                       >
-                        查看詳細步驟
-                      </button>
-                    </div>
-                  </template>
+                        <div>
+                          <div class="flex justify-between items-start mb-4">
+                            <div>
+                              <h4
+                                class="font-black text-xl text-slate-800 dark:text-white"
+                                x-text="recipe.name"
+                              ></h4>
+                              <p
+                                class="text-xs text-slate-500 font-bold"
+                                x-text="recipe.flavor"
+                              ></p>
+                            </div>
+                            <div
+                              class="bg-slate-300 text-slate-700 text-[10px] font-black px-3 py-1 rounded-full"
+                              x-text="'缺 ' + recipe.missing.length + ' 項'"
+                            ></div>
+                          </div>
+                          <div
+                            class="bg-red-50 dark:bg-red-900/20 p-3 rounded-xl border border-red-100 dark:border-red-900 flex justify-between items-center gap-2"
+                          >
+                            <div
+                              class="text-xs font-bold text-red-600 dark:text-red-400"
+                            >
+                              缺少：<span
+                                x-text="getMissingNames(recipe.missing)"
+                              ></span>
+                            </div>
+                            <button
+                              @click="addToShoppingList(recipe.missing)"
+                              class="text-[10px] bg-red-100 hover:bg-red-200 dark:bg-red-900 dark:hover:bg-red-800 text-red-700 dark:text-red-300 px-2 py-1 rounded-lg font-black transition flex items-center gap-1 shrink-0"
+                            >
+                              <i data-lucide="plus" class="w-3 h-3"></i>
+                              加入清單
+                            </button>
+                          </div>
+                        </div>
+                        <button
+                          @click="selectedRecipe = recipe; isRecipeModalOpen = true"
+                          class="mt-6 w-full py-3 rounded-2xl font-black text-sm transition bg-slate-200 dark:bg-slate-700 text-slate-400 dark:text-slate-500"
+                        >
+                          查看詳細步驟
+                        </button>
+                      </div>
+                    </template>
+                  </div>
                 </div>
               </div>
             </div>
@@ -4302,6 +5642,12 @@
             class="space-y-8 animate-fade-in"
             x-cloak
           >
+            <button
+              @click="activeTab = 'laboratory'"
+              class="text-slate-500 hover:text-amber-500 font-bold flex items-center gap-1 transition"
+            >
+              <i data-lucide="arrow-left" class="w-4 h-4"></i> 返回實驗室
+            </button>
             <!-- Selection View -->
             <div x-show="!isMenuGenerated" class="animate-fade-in">
               <div
@@ -4399,7 +5745,7 @@
               </div>
 
               <div
-                class="max-w-2xl mx-auto bg-white dark:bg-slate-900 p-10 md:p-16 rounded-lg shadow-2xl print:shadow-none print:p-0"
+                class="max-w-2xl mx-auto bg-white dark:bg-slate-900 p-6 md:p-10 lg:p-16 rounded-lg shadow-2xl print:shadow-none print:p-0"
               >
                 <div
                   class="text-center border-b-2 border-dashed border-slate-300 dark:border-slate-700 pb-8 mb-8"
@@ -4722,13 +6068,13 @@
 
     <!-- --- 手機版 底部導覽 --- -->
     <nav
-      class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 grid grid-cols-7 items-center px-1 py-3 z-50 shadow-2xl print:hidden"
+      class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 grid grid-cols-6 items-center px-1 py-3 z-50 shadow-2xl print:hidden"
     >
       <template x-for="tab in navigation" :key="tab.id">
         <button
           @click="activeTab = tab.id"
           class="flex flex-col items-center gap-1.5 transition"
-          :class="activeTab === tab.id ? 'text-amber-500 scale-110' : 'text-slate-500'"
+          :class="(activeTab === tab.id || (tab.id === 'ingredients' && ['spirits', 'modifiers', 'tools', 'glassware'].includes(activeTab)) || (tab.id === 'laboratory' && ['recipes', 'bar', 'favorites', 'menu'].includes(activeTab))) ? 'text-amber-500 scale-110' : 'text-slate-500'"
         >
           <i :data-lucide="tab.icon" class="w-5 h-5"></i>
           <span
