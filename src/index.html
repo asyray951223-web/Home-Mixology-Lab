@@ -2861,7 +2861,10 @@
             return this.myBottles.filter(
               (b) =>
                 b.name.toLowerCase().includes(lowerQuery) ||
-                (b.brand && b.brand.toLowerCase().includes(lowerQuery))
+                (b.brand && b.brand.toLowerCase().includes(lowerQuery)) ||
+                this.getIngredientName(b.typeId)
+                  .toLowerCase()
+                  .includes(lowerQuery)
             );
           },
 
@@ -4112,128 +4115,160 @@
               </p>
             </div>
 
-            <!-- Loop through spirits -->
-            <template x-for="spirit in spiritsData" :key="spirit.id">
-              <div
-                class="space-y-6 pt-8 border-t-2 border-slate-200 dark:border-slate-800"
-              >
-                <!-- Spirit Header -->
-                <div class="flex items-center gap-4">
-                  <div
-                    class="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0"
-                    :class="spirit.color"
-                  >
-                    <i :data-lucide="spirit.icon" class="w-8 h-8"></i>
-                  </div>
-                  <div>
-                    <h3
-                      class="text-2xl font-black text-slate-800 dark:text-white"
-                      x-text="spirit.title"
-                    ></h3>
-                    <p
-                      class="text-slate-500 dark:text-slate-400 font-bold"
-                      x-text="spirit.name"
-                    ></p>
-                  </div>
-                </div>
-                <p
-                  class="text-slate-600 dark:text-slate-400 leading-relaxed text-base"
-                  x-html="spirit.intro"
-                ></p>
-
-                <!-- Loop through sections -->
-                <div class="pl-0 md:pl-8 space-y-8">
-                  <template x-for="section in spirit.sections">
-                    <div class="space-y-4">
-                      <h4
-                        class="text-xl font-bold text-slate-700 dark:text-slate-300"
-                        x-text="section.title"
-                      ></h4>
-                      <p
-                        x-show="section.content"
-                        x-html="section.content"
-                        class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm"
-                      ></p>
-                      <p
-                        x-show="section.intro"
-                        x-html="section.intro"
-                        class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm"
-                      ></p>
-
-                      <!-- Points -->
-                      <dl x-show="section.points" class="space-y-3 text-sm">
-                        <template x-for="point in section.points">
-                          <div class="flex flex-col md:flex-row gap-1 md:gap-3">
-                            <dt
-                              class="font-bold text-amber-600 dark:text-amber-400 shrink-0 md:w-40 md:text-right"
-                              x-text="point.name"
-                            ></dt>
-                            <dd
-                              class="text-slate-600 dark:text-slate-400 leading-relaxed md:pl-3 md:border-l-2 md:border-slate-200 dark:md:border-slate-700"
-                              x-html="point.desc"
-                            ></dd>
-                          </div>
-                        </template>
-                      </dl>
-
-                      <!-- Subsections -->
-                      <div x-show="section.subsections" class="space-y-6">
-                        <template x-for="subsection in section.subsections">
-                          <div
-                            class="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-800"
-                          >
-                            <h5
-                              class="text-lg font-black text-slate-800 dark:text-white mb-3"
-                              x-text="subsection.title"
-                            ></h5>
-                            <p
-                              x-show="subsection.intro"
-                              x-html="subsection.intro"
-                              class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm mb-3"
-                            ></p>
-                            <dl
-                              x-show="subsection.points"
-                              class="space-y-3 text-sm"
-                            >
-                              <template x-for="point in subsection.points">
-                                <div
-                                  class="flex flex-col md:flex-row gap-1 md:gap-3"
-                                >
-                                  <dt
-                                    class="font-bold text-amber-600 dark:text-amber-400 shrink-0 md:w-32 md:text-right"
-                                    x-text="point.name"
-                                  ></dt>
-                                  <dd
-                                    class="text-slate-600 dark:text-slate-400 leading-relaxed"
-                                    x-html="point.desc"
-                                  ></dd>
-                                </div>
-                              </template>
-                            </dl>
-                            <div
-                              x-show="subsection.notes"
-                              class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700"
-                            >
-                              <h6
-                                class="text-sm font-bold text-slate-500 dark:text-slate-400 mb-2"
-                                x-text="subsection.notesTitle || '註記：'"
-                              ></h6>
-                              <ul
-                                class="list-disc list-inside space-y-1 text-sm text-slate-600 dark:text-slate-400"
-                              >
-                                <template x-for="note in subsection.notes">
-                                  <li x-html="note"></li>
-                                </template>
-                              </ul>
-                            </div>
-                          </div>
-                        </template>
-                      </div>
+            <!-- Grid of Cards -->
+            <div class="grid md:grid-cols-2 gap-6">
+              <template x-for="spirit in spiritsData" :key="spirit.id">
+                <div
+                  x-data="{ expanded: false }"
+                  class="bg-white dark:bg-slate-900 p-6 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-400 transition-all flex flex-col"
+                >
+                  <!-- Card Header -->
+                  <div class="flex items-center gap-4 mb-4">
+                    <div
+                      class="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0"
+                      :class="spirit.color"
+                    >
+                      <i :data-lucide="spirit.icon" class="w-8 h-8"></i>
                     </div>
-                  </template>
+                    <div>
+                      <h3
+                        class="text-xl font-black text-slate-800 dark:text-white"
+                        x-text="spirit.name.split(' ')[0]"
+                      ></h3>
+                      <p
+                        class="text-xs text-slate-500 dark:text-slate-400 font-bold"
+                        x-text="spirit.title"
+                      ></p>
+                    </div>
+                  </div>
+
+                  <!-- Intro -->
+                  <div
+                    class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6"
+                    :class="!expanded ? 'line-clamp-3' : ''"
+                    x-html="spirit.intro"
+                  ></div>
+
+                  <!-- Buttons -->
+                  <div class="flex gap-3 mt-auto">
+                    <button
+                      @click="activeTab = 'collection'; searchQuery = spirit.name.split(' ')[0]"
+                      class="flex-1 bg-amber-500 text-slate-900 py-3 rounded-xl font-black text-sm hover:bg-amber-400 transition flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20"
+                    >
+                      <i data-lucide="archive" class="w-4 h-4"></i> 查看酒櫃
+                    </button>
+                    <button
+                      @click="expanded = !expanded"
+                      class="flex-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 py-3 rounded-xl font-black text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center gap-2"
+                    >
+                      <i
+                        :data-lucide="expanded ? 'chevron-up' : 'book-open'"
+                        class="w-4 h-4"
+                      ></i>
+                      <span x-text="expanded ? '收起百科' : '閱讀百科'"></span>
+                    </button>
+                  </div>
+
+                  <!-- Expanded Content (Encyclopedia) -->
+                  <div
+                    x-show="expanded"
+                    x-transition
+                    class="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 space-y-8"
+                  >
+                    <template x-for="section in spirit.sections">
+                      <div class="space-y-4">
+                        <h4
+                          class="text-lg font-bold text-slate-700 dark:text-slate-300"
+                          x-text="section.title"
+                        ></h4>
+                        <p
+                          x-show="section.content"
+                          x-html="section.content"
+                          class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm"
+                        ></p>
+                        <p
+                          x-show="section.intro"
+                          x-html="section.intro"
+                          class="text-slate-600 dark:text-slate-400 leading-relaxed text-sm"
+                        ></p>
+
+                        <!-- Points -->
+                        <dl x-show="section.points" class="space-y-3 text-sm">
+                          <template x-for="point in section.points">
+                            <div
+                              class="flex flex-col md:flex-row gap-1 md:gap-3"
+                            >
+                              <dt
+                                class="font-bold text-amber-600 dark:text-amber-400 shrink-0 md:w-32 md:text-right"
+                                x-text="point.name"
+                              ></dt>
+                              <dd
+                                class="text-slate-600 dark:text-slate-400 leading-relaxed md:pl-3 md:border-l-2 md:border-slate-200 dark:md:border-slate-700"
+                                x-html="point.desc"
+                              ></dd>
+                            </div>
+                          </template>
+                        </dl>
+
+                        <!-- Subsections -->
+                        <div x-show="section.subsections" class="space-y-4">
+                          <template x-for="subsection in section.subsections">
+                            <div
+                              class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-800"
+                            >
+                              <h5
+                                class="text-base font-black text-slate-800 dark:text-white mb-2"
+                                x-text="subsection.title"
+                              ></h5>
+                              <p
+                                x-show="subsection.intro"
+                                x-html="subsection.intro"
+                                class="text-slate-600 dark:text-slate-400 leading-relaxed text-xs mb-2"
+                              ></p>
+                              <dl
+                                x-show="subsection.points"
+                                class="space-y-2 text-xs"
+                              >
+                                <template x-for="point in subsection.points">
+                                  <div
+                                    class="flex flex-col md:flex-row gap-1 md:gap-2"
+                                  >
+                                    <dt
+                                      class="font-bold text-amber-600 dark:text-amber-400 shrink-0 md:w-24 md:text-right"
+                                      x-text="point.name"
+                                    ></dt>
+                                    <dd
+                                      class="text-slate-600 dark:text-slate-400 leading-relaxed"
+                                      x-html="point.desc"
+                                    ></dd>
+                                  </div>
+                                </template>
+                              </dl>
+                              <div
+                                x-show="subsection.notes"
+                                class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700"
+                              >
+                                <h6
+                                  class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1"
+                                  x-text="subsection.notesTitle || '註記：'"
+                                ></h6>
+                                <ul
+                                  class="list-disc list-inside space-y-1 text-xs text-slate-600 dark:text-slate-400"
+                                >
+                                  <template x-for="note in subsection.notes">
+                                    <li x-html="note"></li>
+                                  </template>
+                                </ul>
+                              </div>
+                            </div>
+                          </template>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
                 </div>
-              </div>
-            </template>
+              </template>
+            </div>
           </div>
 
           <!-- === 調味 === -->
@@ -4499,7 +4534,9 @@
                   </div>
                 </div>
                 <!-- Glasses in System -->
-                <div class="pl-0 md:pl-8 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div
+                  class="pl-0 md:pl-8 grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+                >
                   <template x-for="glass in system.glasses">
                     <div
                       class="bg-white dark:bg-slate-900 p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col"
@@ -4579,7 +4616,7 @@
             <div
               class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-wrap gap-4 items-center shadow-sm"
             >
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 w-full md:w-auto">
                 <i data-lucide="filter" class="w-4 h-4 text-amber-500"></i>
                 <span
                   class="text-xs font-black uppercase tracking-widest text-slate-400"
@@ -4589,7 +4626,7 @@
 
               <select
                 x-model="filterBase"
-                class="bg-slate-50 dark:bg-slate-800 border-none text-sm font-bold rounded-lg py-2 pl-3 pr-8 focus:ring-2 focus:ring-amber-500 outline-none cursor-pointer text-slate-700 dark:text-slate-200"
+                class="bg-slate-50 dark:bg-slate-800 border-none text-sm font-bold rounded-lg py-2 pl-3 pr-8 focus:ring-2 focus:ring-amber-500 outline-none cursor-pointer text-slate-700 dark:text-slate-200 w-full md:w-auto"
               >
                 <option value="all">所有基酒</option>
                 <template x-for="spirit in spiritsData" :key="spirit.id">
@@ -4599,7 +4636,7 @@
 
               <select
                 x-model="filterDifficulty"
-                class="bg-slate-50 dark:bg-slate-800 border-none text-sm font-bold rounded-lg py-2 pl-3 pr-8 focus:ring-2 focus:ring-amber-500 outline-none cursor-pointer text-slate-700 dark:text-slate-200"
+                class="bg-slate-50 dark:bg-slate-800 border-none text-sm font-bold rounded-lg py-2 pl-3 pr-8 focus:ring-2 focus:ring-amber-500 outline-none cursor-pointer text-slate-700 dark:text-slate-200 w-full md:w-auto"
               >
                 <option value="all">所有難度</option>
                 <option value="1">難度 ★</option>
@@ -4611,7 +4648,7 @@
 
               <select
                 x-model="filterStyle"
-                class="bg-slate-50 dark:bg-slate-800 border-none text-sm font-bold rounded-lg py-2 pl-3 pr-8 focus:ring-2 focus:ring-amber-500 outline-none cursor-pointer text-slate-700 dark:text-slate-200"
+                class="bg-slate-50 dark:bg-slate-800 border-none text-sm font-bold rounded-lg py-2 pl-3 pr-8 focus:ring-2 focus:ring-amber-500 outline-none cursor-pointer text-slate-700 dark:text-slate-200 w-full md:w-auto"
               >
                 <option value="all">所有風格</option>
                 <template x-for="tag in commonTags" :key="tag">
@@ -4622,7 +4659,7 @@
               <button
                 x-show="filterBase !== 'all' || filterDifficulty !== 'all' || filterStyle !== 'all' || searchQuery !== ''"
                 @click="filterBase = 'all'; filterDifficulty = 'all'; filterStyle = 'all'; searchQuery = ''"
-                class="text-xs font-bold text-red-500 hover:text-red-600 flex items-center gap-1 ml-auto"
+                class="text-xs font-bold text-red-500 hover:text-red-600 flex items-center gap-1 w-full md:w-auto justify-center md:justify-start md:ml-auto"
               >
                 <i data-lucide="x-circle" class="w-3 h-3"></i> 清除篩選
               </button>
