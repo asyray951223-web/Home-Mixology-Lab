@@ -226,6 +226,7 @@
           isAiModalOpen: false,
           aiLoading: false,
           aiResult: null,
+          aiFlavorInput: "",
 
           // 表單資料
           bottleForm: {
@@ -3589,6 +3590,7 @@
               
               User's Inventory (Ingredients): ${inventory}
               User's Specific Bottles: ${specificBottles}
+              User's Preferences/Keywords: ${this.aiFlavorInput ? this.aiFlavorInput : "No specific preference, surprise me with something balanced."}
               (Assume basic pantry items like Sugar, Water, Ice, Simple Syrup are available).
 
               Requirements:
@@ -4067,8 +4069,10 @@
               myIngredients: this.myIngredients,
               myBottles: this.myBottles,
               recipes: this.recipes,
+              favoriteRecipes: this.favoriteRecipes,
               modifiers: this.modifiers,
               shoppingList: this.shoppingList,
+              drinkingHistory: this.drinkingHistory,
               barName: this.barName,
               bartenderName: this.bartenderName,
               unit: this.unit,
@@ -4100,6 +4104,7 @@
                 if (data.myIngredients) this.myIngredients = data.myIngredients;
                 if (data.myBottles) this.myBottles = data.myBottles;
                 if (data.recipes) this.recipes = data.recipes;
+                if (data.favoriteRecipes) this.favoriteRecipes = data.favoriteRecipes;
                 if (data.modifiers) this.modifiers = data.modifiers;
                 if (data.shoppingList) this.shoppingList = data.shoppingList;
                 if (data.drinkingHistory) this.drinkingHistory = data.drinkingHistory;
@@ -7243,6 +7248,11 @@
             <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2" x-text="aiLoading ? '正在構思酒譜...' : 'AI 智能調酒師'"></h3>
             <p class="text-slate-500 dark:text-slate-400 mb-8 max-w-xs mx-auto" x-text="aiLoading ? 'AI 正在掃描您的庫存，並嘗試發明一杯獨一無二的調酒。' : '我會根據您目前的庫存，為您發明一杯新調酒。'"></p>
             
+            <div class="w-full max-w-xs mb-6" x-show="!aiLoading">
+                <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">想喝什麼口味？(選填)</label>
+                <input type="text" x-model="aiFlavorInput" placeholder="例如：酸甜、氣泡感、不要太烈..." class="w-full p-3 rounded-xl border-2 border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-bold text-slate-800 dark:text-white focus:border-indigo-500 outline-none transition text-center">
+            </div>
+
             <button @click="generateAiCocktail()" :disabled="aiLoading" class="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-black shadow-xl hover:bg-indigo-500 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105">
                 <i data-lucide="sparkles" class="w-5 h-5"></i>
                 <span x-text="aiLoading ? '請稍候...' : '開始發明調酒'"></span>
