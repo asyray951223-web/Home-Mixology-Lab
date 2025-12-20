@@ -3934,10 +3934,6 @@
                 this.drinkingHistory.unshift(newEntry);
                 alert("已紀錄到飲酒日誌！");
             }
-
-            // 依日期排序 (新到舊)
-            this.drinkingHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
-
             this.isJournalModalOpen = false;
             this.saveData();
           },
@@ -4016,9 +4012,7 @@
             if (data.myBottles) this.myBottles = data.myBottles;
             if (data.favoriteRecipes)
               this.favoriteRecipes = data.favoriteRecipes;
-            if (data.drinkingHistory) {
-              this.drinkingHistory = data.drinkingHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
-            }
+            if (data.drinkingHistory) this.drinkingHistory = data.drinkingHistory;
 
             if (data.recipes) {
               const savedRecipes = data.recipes;
@@ -4108,9 +4102,7 @@
                 if (data.recipes) this.recipes = data.recipes;
                 if (data.modifiers) this.modifiers = data.modifiers;
                 if (data.shoppingList) this.shoppingList = data.shoppingList;
-                if (data.drinkingHistory) {
-                  this.drinkingHistory = data.drinkingHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
-                }
+                if (data.drinkingHistory) this.drinkingHistory = data.drinkingHistory;
                 if (data.barName) this.barName = data.barName;
                 if (data.bartenderName) this.bartenderName = data.bartenderName;
                 if (data.unit) this.unit = data.unit;
