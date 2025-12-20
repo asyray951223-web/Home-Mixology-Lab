@@ -150,6 +150,20 @@
       .animate-fade-in {
         animation: fadeIn 0.4s ease-out forwards;
       }
+      @keyframes slideInRight {
+        from {
+          opacity: 0;
+          transform: translateX(-15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .animate-slide-in-right {
+        animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        opacity: 0;
+      }
       /* 統一全站卷軸樣式 */
       ::-webkit-scrollbar {
         width: 6px;
@@ -1127,6 +1141,59 @@
               },
             ],
           },
+
+          techniquesData: [
+            {
+              id: "shake",
+              name: "搖盪法 (Shaking)",
+              engName: "The Shake",
+              icon: "vibrate",
+              desc: "調酒最經典的動作。目的不僅是冷卻與混合，更重要的是「打入空氣 (Aeration)」。",
+              steps: ["將材料倒入雪克杯 (先便宜後貴)。", "加入冰塊至八分滿 (冰塊越多越好)。", "蓋緊杯蓋 (先蓋中蓋，再蓋小蓋)。", "雙手握持，利用手腕力量前後快速搖盪約 10-15 秒。", "打開杯蓋濾冰倒入杯中。"],
+              tips: "搖盪的聲音應該是清脆的節奏。針對含有果汁、糖漿、奶類或雞蛋的調酒，必須使用搖盪法才能充分混合並產生綿密口感與泡沫。",
+              color: "bg-blue-100 text-blue-600"
+            },
+            {
+              id: "stir",
+              name: "攪拌法 (Stirring)",
+              engName: "The Stir",
+              icon: "refresh-cw",
+              desc: "優雅的技法。目的在於冷卻與混合，但「不打入空氣」，保持酒體清澈如水，口感絲滑。",
+              steps: ["將材料倒入攪拌杯 (Mixing Glass)。", "加入冰塊至八分滿。", "插入吧叉匙，手背向外，利用手指轉動匙柄。", "讓湯匙背部貼著杯壁旋轉，安靜且平順。", "攪拌約 30-45 秒後濾冰倒入杯中。"],
+              tips: "適用於全酒類調酒 (如 Martini, Manhattan)。攪拌過度會導致稀釋過多，不足則不夠冰，需多練習手感。",
+              color: "bg-purple-100 text-purple-600"
+            },
+            {
+              id: "build",
+              name: "直調法 (Building)",
+              engName: "The Build",
+              icon: "layers",
+              desc: "最簡單也最常見的技法。直接在飲用杯中構建調酒，通常用於長飲 (Long Drinks)。",
+              steps: ["在杯中加入冰塊 (通常是滿冰)。", "依序倒入基酒與副材料。", "使用吧叉匙插入杯底，輕輕提拉 (Lifting) 混合即可。"],
+              tips: "適用於氣泡類調酒 (如 Gin Tonic)。避免過度攪拌導致氣泡流失。通常密度大的材料 (糖漿) 先下，或者最後攪拌時要確實把底部的糖漿帶上來。",
+              color: "bg-green-100 text-green-600"
+            },
+            {
+              id: "muddle",
+              name: "搗壓法 (Muddling)",
+              engName: "The Muddle",
+              icon: "hammer",
+              desc: "用於萃取新鮮水果或香草的風味。關鍵在於力道的控制。",
+              steps: ["將水果或香草放入杯底。", "加入糖漿或糖作為研磨介質。", "使用搗棒 (Muddler) 進行壓擠。", "加入其他液體與冰塊進行後續調製。"],
+              tips: "搗薄荷葉時要「輕壓」而非「搗爛」，否則葉脈破裂會釋放苦味。搗檸檬角則需要用力擠出皮油。",
+              color: "bg-amber-100 text-amber-600"
+            },
+            {
+              id: "roll",
+              name: "滾動法 (Rolling)",
+              engName: "The Roll",
+              icon: "move-vertical",
+              desc: "介於搖盪與攪拌之間。將酒液在兩個杯子間來回傾倒，用於「喚醒」風味但不產生過多氣泡。",
+              steps: ["準備兩個雪克杯，其中一個裝冰與材料。", "將液體連同冰塊倒入另一個杯子。", "重複來回倒約 4-5 次。", "濾入杯中。"],
+              tips: "最常用於血腥瑪麗 (Bloody Mary)，避免番茄汁起泡變混濁，同時又能充分混合濃稠的醬汁。",
+              color: "bg-red-100 text-red-600"
+            }
+          ],
 
           modifiers: [
             {
@@ -4277,7 +4344,7 @@
           <template x-for="tab in navigation" :key="tab.id">
             <button
               @click="activeTab = tab.id"
-              :class="(activeTab === tab.id || (tab.id === 'ingredients' && ['spirits', 'modifiers', 'tools', 'glassware'].includes(activeTab)) || (tab.id === 'laboratory' && ['recipes', 'bar', 'favorites', 'menu'].includes(activeTab))) ? 'bg-amber-500 text-slate-900 shadow-lg' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+              :class="(activeTab === tab.id || (tab.id === 'ingredients' && ['spirits', 'modifiers', 'tools', 'glassware', 'techniques'].includes(activeTab)) || (tab.id === 'laboratory' && ['recipes', 'bar', 'favorites', 'menu'].includes(activeTab))) ? 'bg-amber-500 text-slate-900 shadow-lg' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
               class="w-full px-5 py-4 rounded-2xl font-bold text-sm flex items-center gap-4 transition-all"
             >
               <i :data-lucide="tab.icon" class="w-5 h-5"></i>
@@ -4612,6 +4679,34 @@
                     class="text-blue-600 dark:text-blue-400 font-bold flex items-center gap-2 group-hover:gap-4 transition-all"
                   >
                     前往探索 <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                  </span>
+                </div>
+              </div>
+
+              <!-- 技法 Card -->
+              <div
+                @click="activeTab = 'techniques'"
+                class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-400 cursor-pointer group transition-all hover:shadow-xl relative overflow-hidden md:col-span-2 lg:col-span-1"
+              >
+                <div
+                  class="absolute top-0 right-0 p-10 opacity-10 group-hover:opacity-20 transition-opacity"
+                >
+                  <i data-lucide="hand-metal" class="w-32 h-32 text-indigo-500"></i>
+                </div>
+                <div class="relative z-10">
+                  <div
+                    class="w-14 h-14 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
+                  >
+                    <i data-lucide="hand-metal" class="w-8 h-8"></i>
+                  </div>
+                  <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2">調酒技法</h3>
+                  <p class="text-slate-500 dark:text-slate-400 font-medium mb-6">
+                    搖盪、攪拌、直調。<br />掌握這些核心手法，你就是專業調酒師。
+                  </p>
+                  <span
+                    class="text-indigo-600 dark:text-indigo-400 font-bold flex items-center gap-2 group-hover:gap-4 transition-all"
+                  >
+                    前往學習 <i data-lucide="arrow-right" class="w-4 h-4"></i>
                   </span>
                 </div>
               </div>
@@ -5178,6 +5273,65 @@
                 </div>
               </div>
             </template>
+          </div>
+
+          <!-- === 調酒技法 === -->
+          <div
+            x-show="activeTab === 'techniques'"
+            class="space-y-12 animate-fade-in"
+            x-cloak
+          >
+            <div>
+              <button
+                @click="activeTab = 'ingredients'"
+                class="mb-4 text-slate-500 hover:text-amber-500 font-bold flex items-center gap-1 transition"
+              >
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> 返回調酒材料
+              </button>
+              <h2 class="text-4xl font-black text-slate-900 dark:text-white">
+                調酒技法全書
+              </h2>
+              <p class="text-slate-500 mt-2 text-lg">
+                調酒不僅是混合材料，更是控制溫度、稀釋度與空氣含量的藝術。
+              </p>
+            </div>
+
+            <div class="grid gap-8">
+              <template x-for="tech in techniquesData" :key="tech.id">
+                <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row gap-8">
+                   <!-- Icon Section -->
+                   <div class="shrink-0 flex flex-col items-center md:items-start">
+                       <div :class="tech.color" class="w-20 h-20 rounded-3xl flex items-center justify-center mb-4">
+                           <i :data-lucide="tech.icon" class="w-10 h-10"></i>
+                       </div>
+                       <h3 class="text-2xl font-black text-slate-900 dark:text-white text-center md:text-left" x-text="tech.name"></h3>
+                       <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1" x-text="tech.engName"></p>
+                   </div>
+
+                   <!-- Content Section -->
+                   <div class="flex-1 space-y-6">
+                       <p class="text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed" x-text="tech.desc"></p>
+                       
+                       <div class="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6">
+                           <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">操作步驟</h4>
+                           <ol class="space-y-3">
+                               <template x-for="(step, idx) in tech.steps">
+                                   <li class="flex gap-3 text-slate-700 dark:text-slate-200 font-bold text-sm animate-slide-in-right" :style="`animation-delay: ${idx * 100}ms`">
+                                       <span class="flex items-center justify-center w-6 h-6 rounded-full bg-white dark:bg-slate-700 text-slate-400 text-xs shrink-0 border border-slate-200 dark:border-slate-600" x-text="idx + 1"></span>
+                                       <span x-text="step"></span>
+                                   </li>
+                               </template>
+                           </ol>
+                       </div>
+
+                       <div class="flex items-start gap-3 text-amber-600 dark:text-amber-500 bg-amber-50 dark:bg-amber-900/20 p-4 rounded-xl border border-amber-100 dark:border-amber-900/30">
+                           <i data-lucide="lightbulb" class="w-5 h-5 shrink-0 mt-0.5"></i>
+                           <p class="text-sm font-bold" x-text="tech.tips"></p>
+                       </div>
+                   </div>
+                </div>
+              </template>
+            </div>
           </div>
 
           <!-- === 杯具百科 === -->
@@ -7077,7 +7231,7 @@
         <button
           @click="activeTab = tab.id"
           class="flex flex-col items-center gap-1.5 transition"
-          :class="(activeTab === tab.id || (tab.id === 'ingredients' && ['spirits', 'modifiers', 'tools', 'glassware'].includes(activeTab)) || (tab.id === 'laboratory' && ['recipes', 'bar', 'favorites', 'menu'].includes(activeTab))) ? 'text-amber-500 scale-110' : 'text-slate-500'"
+          :class="(activeTab === tab.id || (tab.id === 'ingredients' && ['spirits', 'modifiers', 'tools', 'glassware', 'techniques'].includes(activeTab)) || (tab.id === 'laboratory' && ['recipes', 'bar', 'favorites', 'menu'].includes(activeTab))) ? 'text-amber-500 scale-110' : 'text-slate-500'"
         >
           <i :data-lucide="tab.icon" class="w-5 h-5"></i>
           <span
