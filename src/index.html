@@ -236,6 +236,7 @@
             price: "",
             location: "",
             purchaseDate: "",
+            openDate: "", // 新增開封日期
             rating: 5,
             notes: "",
             tags: "",
@@ -3230,6 +3231,7 @@
               price: bottle.price || "",
               location: bottle.location || "",
               purchaseDate: bottle.purchaseDate || "",
+              openDate: bottle.openDate || "",
               rating: bottle.rating ?? 5,
               notes: bottle.notes || "",
               tags: (bottle.tags || []).join(", "),
@@ -4204,10 +4206,13 @@
     x-data="cocktailApp()"
     x-init="init()"
   >
+    <!-- Mobile Sidebar Backdrop -->
+    <div x-show="isSidebarOpen" @click="isSidebarOpen = false" x-transition.opacity class="fixed inset-0 bg-slate-900/80 z-[55] md:hidden backdrop-blur-sm"></div>
+
     <div class="flex min-h-screen relative">
       <!-- --- 平板/電腦版 側邊選單 --- -->
       <aside
-        class="bg-slate-900 text-white w-72 shrink-0 h-screen top-0 flex-col p-6 flex transition-all z-40 fixed md:sticky"
+        class="bg-slate-900 text-white w-72 shrink-0 h-screen top-0 flex-col p-6 flex transition-all z-[60] fixed md:sticky"
         x-show="isSidebarOpen"
         x-cloak
         x-transition:enter="transition ease-out duration-300"
@@ -4275,7 +4280,7 @@
       >
         <main
           class="max-w-7xl mx-auto p-4 md:p-8 lg:p-10 pb-48 md:pb-10 transition-all duration-300"
-          :class="!isSidebarOpen ? 'md:pt-24' : ''"
+          :class="!isSidebarOpen ? 'pt-24' : ''"
         >
           <!-- === 首頁 === -->
           <div
@@ -6268,6 +6273,15 @@
                         <i data-lucide="calendar" class="w-3 h-3"></i>
                         <span x-text="bottle.purchaseDate"></span>
                       </div>
+                      <div
+                        x-show="bottle.openDate"
+                        class="flex items-center gap-1"
+                        :class="(isPerishable(bottle.typeId) && getDaysOpened(bottle.openDate) > 30) ? 'text-red-500 font-bold' : ''"
+                      >
+                        <i data-lucide="box-select" class="w-3 h-3"></i>
+                        <span x-text="'已開 ' + getDaysOpened(bottle.openDate) + ' 天'"></span>
+                        <i x-show="isPerishable(bottle.typeId) && getDaysOpened(bottle.openDate) > 30" data-lucide="alert-circle" class="w-3 h-3 ml-1"></i>
+                      </div>
                       <div x-show="bottle.features" class="w-full">
                         <span
                           class="font-bold text-amber-600 bg-amber-50 dark:bg-amber-900/30 dark:text-amber-400 px-1 rounded"
@@ -7131,6 +7145,17 @@
                 type="date"
                 class="w-full p-3 rounded-2xl border-2 border-slate-100 font-bold text-sm bg-slate-50"
                 x-model="bottleForm.purchaseDate"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2"
+                >開封日期 (選填)</label
+              >
+              <input
+                type="date"
+                class="w-full p-3 rounded-2xl border-2 border-slate-100 font-bold text-sm bg-slate-50"
+                x-model="bottleForm.openDate"
               />
             </div>
           </div>
@@ -8108,7 +8133,5 @@
         </form>
       </div>
     </div>
-  </body>
-</html>
   </body>
 </html>
