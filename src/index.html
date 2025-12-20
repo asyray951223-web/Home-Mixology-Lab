@@ -6581,13 +6581,13 @@
                   >
                     <div
                       x-show="recipe.missing.length > 0"
-                      class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded-full"
+                      class="absolute bottom-4 right-4 text-xs font-bold px-2 py-1 rounded-full"
                       :class="recipe.missing.length === 1 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'"
                       x-text="`缺 ${recipe.missing.length}`"
                     ></div>
                     <div
                       x-show="recipe.missing.length === 0"
-                      class="absolute top-4 right-4 text-xs font-bold px-2 py-1 rounded-full bg-green-100 text-green-700"
+                      class="absolute bottom-4 right-4 text-xs font-bold px-2 py-1 rounded-full bg-green-100 text-green-700"
                     >
                       可調製
                     </div>
