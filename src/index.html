@@ -427,6 +427,7 @@
           drinkingHistory: [],
           isJournalModalOpen: false,
           isNeatLog: false,
+          journalSortBy: "date_desc",
           tempBottleId: "",
           journalForm: {
             id: null,
@@ -436,6 +437,7 @@
             rating: 0,
             notes: "",
             image: null,
+            price: "",
           },
           modifierForm: { categoryIndex: 0, name: "", desc: "", tag: "" },
           recipeForm: {
@@ -4522,6 +4524,7 @@
               origin: "",
               year: "",
               image: null,
+              price: "",
             };
             this.isJournalModalOpen = true;
           },
@@ -4546,6 +4549,7 @@
               origin: "",
               year: "",
               image: null,
+              price: "",
             };
             this.isJournalModalOpen = true;
           },
@@ -4566,6 +4570,7 @@
               origin: freshEntry.origin || "",
               year: freshEntry.year || "",
               image: freshEntry.image || null,
+              price: freshEntry.price || "",
             };
             this.isJournalModalOpen = true;
           },
@@ -4586,6 +4591,7 @@
                   origin: this.journalForm.origin,
                   year: this.journalForm.year,
                   image: this.journalForm.image,
+                  price: this.journalForm.price,
                 };
                 alert("日誌紀錄已更新！");
               }
@@ -4644,6 +4650,11 @@
               (a, b) => b[1] - a[1]
             )[0];
 
+            const totalCost = this.drinkingHistory.reduce((sum, h) => {
+              const p = parseFloat(h.price);
+              return sum + (isNaN(p) ? 0 : p);
+            }, 0);
+
             return {
               total,
               thisWeek,
@@ -4653,13 +4664,26 @@
               favoriteBase: topBase
                 ? `${topBase[0]} (${topBase[1]}杯)`
                 : "尚無資料",
+              totalCost,
             };
           },
 
           get sortedHistory() {
-            return [...this.drinkingHistory].sort(
-              (a, b) => new Date(b.date) - new Date(a.date)
-            );
+            let sorted = [...this.drinkingHistory];
+            switch (this.journalSortBy) {
+              case "date_desc":
+                return sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
+              case "date_asc":
+                return sorted.sort((a, b) => new Date(a.date) - new Date(b.date));
+              case "price_desc":
+                return sorted.sort((a, b) => (parseFloat(b.price) || 0) - (parseFloat(a.price) || 0));
+              case "price_asc":
+                return sorted.sort((a, b) => (parseFloat(a.price) || 0) - (parseFloat(b.price) || 0));
+              case "rating_desc":
+                return sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+              default:
+                return sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
+            }
           },
 
           handleJournalImage(event) {
@@ -8439,7 +8463,7 @@
             </div>
 
             <!-- 統計卡片 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               <div
                 class="bg-white dark:bg-slate-900 p-6 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800"
               >
@@ -8502,6 +8526,22 @@
                 <div
                   class="text-2xl font-black text-slate-900 dark:text-white truncate"
                   x-text="journalStats.favoriteBase"
+                ></div>
+              </div>
+              <div
+                class="bg-white dark:bg-slate-900 p-6 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800"
+              >
+                <div
+                  class="flex items-center gap-3 mb-2 text-slate-500 dark:text-slate-400"
+                >
+                  <i data-lucide="coins" class="w-5 h-5"></i>
+                  <span class="font-bold text-xs uppercase tracking-widest"
+                    >總花費</span
+                  >
+                </div>
+                <div
+                  class="text-2xl font-black text-green-600 dark:text-green-400 truncate"
+                  x-text="'$' + journalStats.totalCost.toLocaleString()"
                 ></div>
               </div>
             </div>
@@ -8587,11 +8627,23 @@
             <div
               class="bg-white dark:bg-slate-900 rounded-[2rem] p-8 shadow-sm border border-slate-200 dark:border-slate-800"
             >
-              <h3
-                class="text-2xl font-bold mb-6 text-slate-800 dark:text-white flex items-center gap-3"
-              >
-                <i data-lucide="history" class="text-amber-500"></i> 歷史紀錄
-              </h3>
+              <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
+                <h3
+                  class="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-3"
+                >
+                  <i data-lucide="history" class="text-amber-500"></i> 歷史紀錄
+                </h3>
+                <select
+                  x-model="journalSortBy"
+                  class="bg-slate-50 dark:bg-slate-800 border-none text-sm font-bold rounded-lg py-2 pl-3 pr-8 focus:ring-2 focus:ring-amber-500 outline-none cursor-pointer text-slate-700 dark:text-slate-200"
+                >
+                  <option value="date_desc">最新日期</option>
+                  <option value="date_asc">最舊日期</option>
+                  <option value="price_desc">價格 (高→低)</option>
+                  <option value="price_asc">價格 (低→高)</option>
+                  <option value="rating_desc">評分 (高→低)</option>
+                </select>
+              </div>
 
               <div
                 x-show="drinkingHistory.length === 0"
@@ -8640,6 +8692,7 @@
                       </div>
                       <div
                         x-show="item.origin || item.year"
+                        x-show="item.origin || item.year || item.price"
                         class="flex gap-2 mb-3 text-[10px] font-bold"
                       >
                         <span
@@ -8651,6 +8704,11 @@
                           x-show="item.year"
                           class="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-1 rounded-lg"
                           x-text="item.year"
+                        ></span>
+                        <span
+                          x-show="item.price"
+                          class="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-2 py-1 rounded-lg"
+                          x-text="'$' + item.price"
                         ></span>
                       </div>
                       <div
@@ -10698,6 +10756,31 @@
               class="w-full p-3 rounded-2xl border-2 border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-bold text-slate-800 dark:text-white"
               x-model="journalForm.date"
             />
+          <div class="grid grid-cols-2 gap-6">
+            <div>
+              <label
+                class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2"
+                >飲用時間</label
+              >
+              <input
+                type="datetime-local"
+                required
+                class="w-full p-3 rounded-2xl border-2 border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-bold text-slate-800 dark:text-white"
+                x-model="journalForm.date"
+              />
+            </div>
+            <div>
+              <label
+                class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2"
+                >價格</label
+              >
+              <input
+                type="number"
+                placeholder="$"
+                class="w-full p-3 rounded-2xl border-2 border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 font-bold text-slate-800 dark:text-white outline-none focus:border-amber-500 transition"
+                x-model="journalForm.price"
+              />
+            </div>
           </div>
 
           <div>
