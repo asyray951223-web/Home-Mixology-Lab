@@ -331,6 +331,72 @@
               this.$nextTick(() => lucide.createIcons());
             }, 200);
           },
+          // 拉霸機資料
+          slotReels: [
+            { text: "基酒", icon: "wine" },
+            { text: "風味", icon: "sparkles" },
+            { text: "酒譜", icon: "martini" },
+          ],
+          isSlotSpinning: false,
+          slotResult: null,
+          spinSlots() {
+            if (this.isSlotSpinning) return;
+            this.isSlotSpinning = true;
+            this.slotResult = null;
+
+            // 動畫迴圈
+            const interval = setInterval(() => {
+              this.slotReels = this.slotReels.map(() => ({
+                text: ["Gin", "Vodka", "Rum", "Whiskey", "Tequila", "Brandy"][
+                  Math.floor(Math.random() * 6)
+                ],
+                icon: [
+                  "wine",
+                  "zap",
+                  "glass-water",
+                  "flame",
+                  "droplet",
+                  "cherry",
+                ][Math.floor(Math.random() * 6)],
+              }));
+            }, 100);
+
+            // 2秒後停止並顯示結果
+            setTimeout(() => {
+              clearInterval(interval);
+              const randomRecipe =
+                this.recipes[Math.floor(Math.random() * this.recipes.length)];
+              this.slotResult = randomRecipe;
+
+              // 判斷基酒顯示文字
+              let base = "Liqueur";
+              const baseMap = {
+                gin: "Gin",
+                vodka: "Vodka",
+                rum: "Rum",
+                rum_dark: "Rum",
+                whiskey: "Whiskey",
+                tequila: "Tequila",
+                brandy: "Brandy",
+                pisco: "Brandy",
+              };
+              const foundBase = randomRecipe.ingredients.find(
+                (i) => baseMap[i.id]
+              );
+              if (foundBase) base = baseMap[foundBase.id];
+
+              this.slotReels = [
+                { text: base, icon: "wine" },
+                {
+                  text: randomRecipe.flavor.split("、")[0] || "Tasty",
+                  icon: "sparkles",
+                },
+                { text: randomRecipe.name, icon: "martini" },
+              ];
+              this.isSlotSpinning = false;
+              this.$nextTick(() => lucide.createIcons());
+            }, 2000);
+          },
           isMenuGenerated: false,
           currentScale: 1,
           batchMode: false,
@@ -7781,6 +7847,13 @@
                 >
                   <i data-lucide="sparkles" class="w-4 h-4"></i> 心情點酒
                 </button>
+                <button
+                  @click="rouletteMode = 'slots'"
+                  :class="rouletteMode === 'slots' ? 'bg-white dark:bg-slate-700 shadow text-amber-600' : 'text-slate-400'"
+                  class="px-6 py-2 rounded-lg font-black transition flex items-center gap-2"
+                >
+                  <i data-lucide="joystick" class="w-4 h-4"></i> 幸運拉霸
+                </button>
               </div>
             </div>
 
@@ -7945,6 +8018,102 @@
                       重選
                     </button>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Slots Section (New) -->
+            <div
+              x-show="rouletteMode === 'slots'"
+              class="flex flex-col items-center justify-center animate-fade-in"
+            >
+              <!-- Machine Body -->
+              <div
+                class="bg-slate-800 p-6 md:p-8 rounded-[2.5rem] shadow-2xl border-b-8 border-r-8 border-slate-900 relative max-w-2xl w-full"
+              >
+                <!-- Reels -->
+                <div
+                  class="flex gap-2 md:gap-4 mb-8 bg-slate-900 p-4 rounded-2xl border-inner shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]"
+                >
+                  <template x-for="(reel, index) in slotReels">
+                    <div
+                      class="flex-1 bg-slate-100 rounded-xl h-32 md:h-48 flex flex-col items-center justify-center border-4 border-slate-300 overflow-hidden relative"
+                    >
+                      <!-- Blur effect when spinning -->
+                      <div
+                        class="flex flex-col items-center transition-all duration-100 p-2 text-center"
+                        :class="isSlotSpinning ? 'blur-sm scale-110 opacity-80' : ''"
+                      >
+                        <i
+                          :data-lucide="reel.icon"
+                          class="w-8 h-8 md:w-16 md:h-16 text-slate-700 mb-2 md:mb-4"
+                        ></i>
+                        <span
+                          class="text-xs md:text-lg font-black text-slate-900 leading-tight break-words w-full"
+                          x-text="reel.text"
+                        ></span>
+                      </div>
+                      <!-- Shine/Glass effect -->
+                      <div
+                        class="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/10 pointer-events-none"
+                      ></div>
+                      <div
+                        class="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/10 pointer-events-none"
+                      ></div>
+                    </div>
+                  </template>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex justify-center relative">
+                  <div
+                    class="absolute inset-x-0 top-1/2 h-1 bg-slate-900 -z-10"
+                  ></div>
+                  <button
+                    @click="spinSlots()"
+                    :disabled="isSlotSpinning"
+                    class="bg-red-500 text-white w-24 h-24 md:w-32 md:h-32 rounded-full font-black shadow-[0_8px_0_rgb(153,27,27),0_15px_20px_rgba(0,0,0,0.4)] active:shadow-none active:translate-y-[8px] transition-all flex flex-col items-center justify-center gap-1 text-xl disabled:opacity-50 disabled:cursor-not-allowed border-4 border-red-600 z-10 group"
+                  >
+                    <span class="text-xs font-bold text-red-200">PULL</span>
+                    <i
+                      data-lucide="joystick"
+                      class="w-8 h-8 md:w-10 md:h-10 group-active:rotate-180 transition-transform duration-300"
+                    ></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Result -->
+              <div
+                x-show="slotResult && !isSlotSpinning"
+                class="mt-10 w-full max-w-md animate-fade-in"
+                x-transition
+              >
+                <div
+                  class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-xl border-4 border-amber-400 text-center relative overflow-hidden"
+                >
+                  <div
+                    class="absolute top-0 left-0 w-full h-4 bg-amber-400"
+                  ></div>
+                  <div
+                    class="text-amber-500 font-black uppercase tracking-widest text-sm mb-4 mt-2"
+                  >
+                    Jackpot!
+                  </div>
+                  <h3
+                    class="text-3xl font-black text-slate-900 dark:text-white mb-2"
+                    x-text="slotResult?.name"
+                  ></h3>
+                  <p
+                    class="text-slate-500 dark:text-slate-400 font-bold mb-8"
+                    x-text="slotResult?.flavor"
+                  ></p>
+                  <button
+                    @click="openRecipeDetail(slotResult)"
+                    class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 rounded-xl font-black text-lg hover:scale-105 transition shadow-lg"
+                  >
+                    查看酒譜
+                  </button>
                 </div>
               </div>
             </div>
