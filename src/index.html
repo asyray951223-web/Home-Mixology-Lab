@@ -435,6 +435,7 @@
             date: "",
             rating: 0,
             notes: "",
+            image: null,
           },
           modifierForm: { categoryIndex: 0, name: "", desc: "", tag: "" },
           recipeForm: {
@@ -4520,6 +4521,7 @@
               notes: "",
               origin: "",
               year: "",
+              image: null,
             };
             this.isJournalModalOpen = true;
           },
@@ -4543,6 +4545,7 @@
               notes: "",
               origin: "",
               year: "",
+              image: null,
             };
             this.isJournalModalOpen = true;
           },
@@ -4562,6 +4565,7 @@
               notes: freshEntry.notes || "",
               origin: freshEntry.origin || "",
               year: freshEntry.year || "",
+              image: freshEntry.image || null,
             };
             this.isJournalModalOpen = true;
           },
@@ -4581,6 +4585,7 @@
                   notes: this.journalForm.notes,
                   origin: this.journalForm.origin,
                   year: this.journalForm.year,
+                  image: this.journalForm.image,
                 };
                 alert("日誌紀錄已更新！");
               }
@@ -4655,6 +4660,45 @@
             return [...this.drinkingHistory].sort(
               (a, b) => new Date(b.date) - new Date(a.date)
             );
+          },
+
+          handleJournalImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const img = new Image();
+              img.onload = () => {
+                const canvas = document.createElement("canvas");
+                const ctx = canvas.getContext("2d");
+
+                const maxWidth = 800;
+                const maxHeight = 800;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                  if (width > maxWidth) {
+                    height *= maxWidth / width;
+                    width = maxWidth;
+                  }
+                } else {
+                  if (height > maxHeight) {
+                    width *= maxHeight / height;
+                    height = maxHeight;
+                  }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+
+                this.journalForm.image = canvas.toDataURL("image/jpeg", 0.7);
+              };
+              img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
           },
 
           get userTasteProfile() {
@@ -8610,6 +8654,16 @@
                         ></span>
                       </div>
                       <div
+                        x-show="item.image"
+                        class="mb-3 rounded-xl overflow-hidden border border-slate-100 dark:border-slate-700"
+                      >
+                        <img
+                          :src="item.image"
+                          class="w-full h-48 object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div
                         class="text-xs font-bold text-slate-400 mb-3 flex items-center gap-2"
                       >
                         <i data-lucide="clock" class="w-3 h-3"></i>
@@ -9663,6 +9717,54 @@
                   ></div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <div>
+            <label
+              class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2"
+              >照片紀錄</label
+            >
+            <div
+              x-show="!journalForm.image"
+              class="flex items-center justify-center w-full"
+            >
+              <label
+                class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-200 dark:border-slate-700 border-dashed rounded-2xl cursor-pointer bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition"
+              >
+                <div
+                  class="flex flex-col items-center justify-center pt-5 pb-6"
+                >
+                  <i
+                    data-lucide="camera"
+                    class="w-8 h-8 text-slate-400 mb-2"
+                  ></i>
+                  <p
+                    class="text-xs text-slate-500 dark:text-slate-400 font-bold"
+                  >
+                    點擊上傳或拍攝照片
+                  </p>
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  class="hidden"
+                  @change="handleJournalImage"
+                />
+              </label>
+            </div>
+            <div
+              x-show="journalForm.image"
+              class="relative rounded-2xl overflow-hidden group"
+            >
+              <img :src="journalForm.image" class="w-full h-48 object-cover" />
+              <button
+                type="button"
+                @click="journalForm.image = null"
+                class="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition"
+              >
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
             </div>
           </div>
 
