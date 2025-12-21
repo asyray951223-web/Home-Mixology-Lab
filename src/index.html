@@ -13,6 +13,8 @@
         darkMode: "class",
       };
     </script>
+    <!-- Barcode Scanner -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <!-- Firebase SDK (Module) -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -222,6 +224,16 @@
           sortBottleBy: "date_desc",
           // Firebase User State
           user: null,
+          // Barcode Scanner
+          isScannerOpen: false,
+          scannerObj: null,
+          isStatsModalOpen: false,
+          // 自訂酒單 (Custom Lists)
+          customLists: [],
+          isAddToListModalOpen: false,
+          recipeToAdd: null,
+          newListName: "",
+          viewingListId: null,
           // 設定與偏好
           barName: "居家調酒實驗室",
           bartenderName: "Home Mixology Lab",
@@ -3580,6 +3592,35 @@
             this.isRecipeFormOpen = true;
           },
 
+          cloneRecipe(recipe) {
+            // 1. 視為新酒譜 (ID = null)
+            this.editingRecipeId = null;
+            
+            // 2. 準備成分資料
+            const amounts = {};
+            recipe.ingredients.forEach((i) => {
+              amounts[i.id] = i.amount;
+            });
+            
+            // 3. 填入表單 (使用 Deep Copy 避免修改到原物件)
+            this.recipeForm = {
+              name: recipe.name + " (自訂版)",
+              category: recipe.category || "自創酒譜",
+              abv: recipe.abv || "未知",
+              difficulty: recipe.difficulty || 1,
+              flavor: recipe.flavor,
+              features: recipe.features || "",
+              tags: (recipe.tags || []).join(", "),
+              ingredients: recipe.ingredients.map((i) => i.id),
+              amounts: amounts,
+              steps: recipe.steps.join("\n"),
+              tips: recipe.tips,
+              cost: recipe.cost ?? null,
+              profile: recipe.profile ? JSON.parse(JSON.stringify(recipe.profile)) : { sweet: 1, sour: 1, bitter: 1, boozy: 1, complex: 1 },
+            };
+            this.isRecipeFormOpen = true;
+          },
+
           editRecipe(recipe) {
             this.editingRecipeId = recipe.id;
             const amounts = {};
@@ -4233,6 +4274,183 @@
              };
           },
 
+          get userTasteProfile() {
+            const favs = this.favoriteRecipeList;
+            if (favs.length === 0) return null;
+            
+            let total = { sweet: 0, sour: 0, bitter: 0, boozy: 0, complex: 0 };
+            favs.forEach(r => {
+                const p = r.profile || { sweet: 1, sour: 1, bitter: 1, boozy: 1, complex: 1 };
+                total.sweet += p.sweet;
+                total.sour += p.sour;
+                total.bitter += p.bitter;
+                total.boozy += p.boozy;
+                total.complex += p.complex;
+            });
+
+            const count = favs.length;
+            return {
+                sweet: parseFloat((total.sweet / count).toFixed(1)),
+                sour: parseFloat((total.sour / count).toFixed(1)),
+                bitter: parseFloat((total.bitter / count).toFixed(1)),
+                boozy: parseFloat((total.boozy / count).toFixed(1)),
+                complex: parseFloat((total.complex / count).toFixed(1))
+            };
+          },
+
+          // --- Barcode Scanner Logic ---
+          startScanner() {
+            if (typeof Html5Qrcode === 'undefined') {
+                alert("掃描功能模組尚未載入，請檢查網路連線。");
+                return;
+            }
+            this.isScannerOpen = true;
+            this.$nextTick(() => {
+                const html5QrCode = new Html5Qrcode("reader");
+                this.scannerObj = html5QrCode;
+                const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+                
+                // Prefer back camera
+                html5QrCode.start({ facingMode: "environment" }, config, (decodedText, decodedResult) => {
+                    this.handleBarcode(decodedText);
+                    this.stopScanner();
+                }, (errorMessage) => {
+                    // parse error, ignore
+                }).catch(err => {
+                    console.error(err);
+                    alert("無法啟動相機，請確認瀏覽器權限或使用 HTTPS 連線。");
+                    this.isScannerOpen = false;
+                });
+            });
+          },
+
+          stopScanner() {
+             if (this.scannerObj) {
+                 this.scannerObj.stop().then(() => {
+                     this.scannerObj.clear();
+                     this.isScannerOpen = false;
+                     this.scannerObj = null;
+                 }).catch(err => {
+                     console.error("Failed to stop scanner", err);
+                     this.isScannerOpen = false;
+                 });
+             } else {
+                 this.isScannerOpen = false;
+             }
+          },
+
+          async handleBarcode(barcode) {
+             const apiUrl = `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`;
+             try {
+                 const originalName = this.bottleForm.name;
+                 this.bottleForm.name = "搜尋中...";
+                 
+                 const res = await fetch(apiUrl);
+                 const data = await res.json();
+                 
+                 if (data.status === 1) {
+                     const p = data.product;
+                     this.bottleForm.name = p.product_name || originalName;
+                     this.bottleForm.brand = p.brands || this.bottleForm.brand;
+                     alert(`掃描成功！\n品名：${p.product_name}\n品牌：${p.brands || '未知'}`);
+                 } else {
+                     this.bottleForm.name = originalName;
+                     alert("資料庫中找不到此條碼，請手動輸入。");
+                 }
+             } catch (e) {
+                 console.error(e);
+                 alert("查詢失敗，請檢查網路連線。");
+                 this.bottleForm.name = "";
+             }
+          },
+
+          // --- Inventory Stats Logic ---
+          get inventoryPieSlices() {
+            const total = this.myBottles.length;
+            if (total === 0) return [];
+            
+            const counts = {};
+            this.myBottles.forEach(b => {
+                 // 簡化名稱，只取括號前的部分以保持圖表整潔
+                 let name = this.getIngredientName(b.typeId).split(' (')[0];
+                 counts[name] = (counts[name] || 0) + 1;
+            });
+            
+            const stats = Object.entries(counts)
+                .map(([name, count]) => ({ name, count }))
+                .sort((a, b) => b.count - a.count);
+                
+            let accCount = 0;
+            // 定義一組配色 (Amber, Blue, Emerald, Rose, Violet, Pink, Indigo, Slate)
+            const colors = ['#f59e0b', '#3b82f6', '#10b981', '#f43f5e', '#8b5cf6', '#ec4899', '#6366f1', '#64748b'];
+            
+            if (stats.length === 1) {
+                 return [{ ...stats[0], percent: 100, path: 'M 50 50 m 0 -40 a 40 40 0 1 1 0 80 a 40 40 0 1 1 0 -80', color: colors[0] }];
+            }
+
+            return stats.map((stat, i) => {
+                const startAngle = (accCount / total) * Math.PI * 2 - Math.PI / 2;
+                accCount += stat.count;
+                const endAngle = (accCount / total) * Math.PI * 2 - Math.PI / 2;
+                
+                const x1 = 50 + 40 * Math.cos(startAngle);
+                const y1 = 50 + 40 * Math.sin(startAngle);
+                const x2 = 50 + 40 * Math.cos(endAngle);
+                const y2 = 50 + 40 * Math.sin(endAngle);
+                
+                const largeArc = (stat.count / total) > 0.5 ? 1 : 0;
+                const path = `M 50 50 L ${x1} ${y1} A 40 40 0 ${largeArc} 1 ${x2} ${y2} Z`;
+                
+                return { ...stat, percent: Math.round((stat.count / total) * 100), path, color: colors[i % colors.length] };
+            });
+          },
+
+          // --- Custom Lists Logic ---
+          createCustomList() {
+            if (!this.newListName.trim()) return;
+            this.customLists.push({
+                id: Date.now(),
+                name: this.newListName.trim(),
+                recipeIds: []
+            });
+            this.newListName = "";
+            this.saveData();
+          },
+
+          deleteCustomList(id) {
+            if(confirm("確定要刪除這個酒單嗎？")) {
+                this.customLists = this.customLists.filter(l => l.id !== id);
+                if (this.viewingListId === id) this.viewingListId = null;
+                this.saveData();
+            }
+          },
+
+          toggleRecipeInList(listId, recipeId) {
+            const list = this.customLists.find(l => l.id === listId);
+            if (!list) return;
+            if (list.recipeIds.includes(recipeId)) {
+                list.recipeIds = list.recipeIds.filter(id => id !== recipeId);
+            } else {
+                list.recipeIds.push(recipeId);
+            }
+            this.saveData();
+          },
+
+          openAddToListModal(recipe) {
+            this.recipeToAdd = recipe;
+            this.isAddToListModalOpen = true;
+          },
+
+          get viewingList() {
+            return this.customLists.find(l => l.id === this.viewingListId);
+          },
+
+          get viewingListRecipes() {
+            const list = this.viewingList;
+            if (!list) return [];
+            return this.recipes.filter(r => list.recipeIds.includes(r.id));
+          },
+
           saveData() {
             localStorage.setItem(
               "cocktail_data",
@@ -4241,6 +4459,7 @@
                 myBottles: this.myBottles,
                 recipes: this.recipes,
                 favoriteRecipes: this.favoriteRecipes,
+                customLists: this.customLists,
                 modifiers: this.modifiers,
                 shoppingList: this.shoppingList,
                 drinkingHistory: this.drinkingHistory,
@@ -4268,6 +4487,7 @@
             if (data.myBottles) this.myBottles = data.myBottles;
             if (data.favoriteRecipes)
               this.favoriteRecipes = data.favoriteRecipes;
+            if (data.customLists) this.customLists = data.customLists;
             if (data.drinkingHistory) this.drinkingHistory = data.drinkingHistory;
 
             if (data.recipes) {
@@ -4323,6 +4543,7 @@
               myIngredients: this.myIngredients,
               myBottles: this.myBottles,
               recipes: this.recipes,
+              customLists: this.customLists,
               modifiers: this.modifiers,
               shoppingList: this.shoppingList,
               barName: this.barName,
@@ -4397,6 +4618,7 @@
             this.$watch("favoriteRecipes", () => {
               this.saveData();
             });
+            this.$watch("customLists", () => this.saveData());
             this.$watch("modifiers", () => this.saveData());
             this.$watch("shoppingList", () => this.saveData());
             this.$watch("drinkingHistory", () => this.saveData());
@@ -4503,7 +4725,7 @@
           <template x-for="tab in navigation" :key="tab.id">
             <button
               @click="activeTab = tab.id"
-              :class="(activeTab === tab.id || (tab.id === 'ingredients' && ['spirits', 'modifiers', 'tools', 'glassware', 'techniques'].includes(activeTab)) || (tab.id === 'laboratory' && ['recipes', 'bar', 'favorites', 'menu'].includes(activeTab))) ? 'bg-amber-500 text-slate-900 shadow-lg' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
+              :class="(activeTab === tab.id || (tab.id === 'ingredients' && ['spirits', 'modifiers', 'tools', 'glassware', 'techniques'].includes(activeTab)) || (tab.id === 'laboratory' && ['recipes', 'bar', 'favorites', 'menu', 'custom_lists'].includes(activeTab))) ? 'bg-amber-500 text-slate-900 shadow-lg' : 'text-slate-400 hover:bg-slate-800 hover:text-white'"
               class="w-full px-5 py-4 rounded-2xl font-bold text-sm flex items-center gap-4 transition-all"
             >
               <i :data-lucide="tab.icon" class="w-5 h-5"></i>
@@ -5010,6 +5232,30 @@
                     class="text-red-500 dark:text-red-400 font-bold flex items-center gap-2 group-hover:gap-4 transition-all"
                   >
                     查看收藏 <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                  </span>
+                </div>
+              </div>
+
+              <!-- 自訂酒單 Card -->
+              <div
+                @click="activeTab = 'custom_lists'; viewingListId = null"
+                class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800 hover:border-cyan-400 dark:hover:border-cyan-400 cursor-pointer group transition-all hover:shadow-xl relative overflow-hidden"
+              >
+                <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <i data-lucide="folder-heart" class="w-32 h-32 text-cyan-500"></i>
+                </div>
+                <div class="relative z-10">
+                  <div class="w-12 h-12 bg-cyan-100 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-400 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="folder-heart" class="w-6 h-6"></i>
+                  </div>
+                  <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2">
+                    自訂酒單
+                  </h3>
+                  <p class="text-slate-500 dark:text-slate-400 font-medium mb-4">
+                    建立您的專屬分類，如「露營酒單」、「聖誕派對」。
+                  </p>
+                  <span class="text-cyan-600 dark:text-cyan-400 font-bold flex items-center gap-2 group-hover:gap-4 transition-all">
+                    管理酒單 <i data-lucide="arrow-right" class="w-4 h-4"></i>
                   </span>
                 </div>
               </div>
@@ -5758,6 +6004,13 @@
                         ></i>
                       </button>
                       <button
+                        @click.stop="openAddToListModal(recipe)"
+                        class="text-slate-300 hover:text-cyan-500 transition p-1 hover:bg-cyan-50 dark:hover:bg-cyan-900/30 rounded-lg"
+                        title="加入自訂酒單"
+                      >
+                        <i data-lucide="folder-plus" class="w-4 h-4"></i>
+                      </button>
+                      <button
                         @click.stop="openNoteModal(recipe)"
                         class="text-slate-300 hover:text-amber-500 transition p-1 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg"
                         title="評分與筆記"
@@ -5788,6 +6041,13 @@
                         title="下載酒譜卡片"
                       >
                         <i data-lucide="image-down" class="w-4 h-4"></i>
+                      </button>
+                      <button
+                        @click.stop="cloneRecipe(recipe)"
+                        class="text-slate-300 hover:text-green-500 transition p-1 hover:bg-green-50 dark:hover:bg-green-900/30 rounded-lg"
+                        title="複製並改良"
+                      >
+                        <i data-lucide="copy" class="w-4 h-4"></i>
                       </button>
                       <button
                         @click.stop="editRecipe(recipe)"
@@ -6033,6 +6293,13 @@
                         <i data-lucide="heart" class="w-5 h-5 fill-current"></i>
                       </button>
                       <button
+                        @click.stop="openAddToListModal(recipe)"
+                        class="text-slate-300 hover:text-cyan-500 transition p-1 hover:bg-cyan-50 dark:hover:bg-cyan-900/30 rounded-lg"
+                        title="加入自訂酒單"
+                      >
+                        <i data-lucide="folder-plus" class="w-4 h-4"></i>
+                      </button>
+                      <button
                         @click.stop="openNoteModal(recipe)"
                         class="text-slate-300 hover:text-amber-500 transition p-1 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-lg"
                         title="評分與筆記"
@@ -6227,6 +6494,98 @@
                   </button>
                 </div>
               </template>
+            </div>
+          </div>
+
+          <!-- === 自訂酒單 (Custom Lists) === -->
+          <div x-show="activeTab === 'custom_lists'" class="space-y-8 animate-fade-in" x-cloak>
+            <button
+              @click="viewingListId ? viewingListId = null : activeTab = 'laboratory'"
+              class="text-slate-500 hover:text-amber-500 font-bold flex items-center gap-1 transition"
+            >
+              <i data-lucide="arrow-left" class="w-4 h-4"></i> <span x-text="viewingListId ? '返回酒單列表' : '返回實驗室'"></span>
+            </button>
+
+            <!-- 列表總覽模式 -->
+            <div x-show="!viewingListId">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                    <div>
+                        <h2 class="text-4xl font-black text-slate-900 dark:text-white">自訂酒單</h2>
+                        <p class="text-slate-500 mt-2 text-lg">建立並管理您的專屬分類。</p>
+                    </div>
+                    <div class="flex gap-2 w-full md:w-auto">
+                        <input type="text" x-model="newListName" placeholder="輸入新酒單名稱..." class="flex-1 md:w-64 p-3 rounded-xl border-2 border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-bold focus:outline-none focus:border-cyan-500 transition" @keydown.enter="createCustomList()">
+                        <button @click="createCustomList()" class="bg-cyan-500 text-white px-6 py-3 rounded-xl font-black shadow-lg hover:bg-cyan-400 transition flex items-center gap-2 shrink-0">
+                            <i data-lucide="plus" class="w-5 h-5"></i> 建立
+                        </button>
+                    </div>
+                </div>
+
+                <div x-show="customLists.length === 0" class="text-center py-20 bg-white dark:bg-slate-900 rounded-[2.5rem] border-2 border-dashed border-slate-200 dark:border-slate-800">
+                    <i data-lucide="folder-open" class="w-16 h-16 mx-auto text-slate-200 mb-6"></i>
+                    <h3 class="text-2xl font-black text-slate-400">還沒有建立任何酒單</h3>
+                    <p class="text-slate-500 mt-2">在上方輸入名稱，建立您的第一個分類吧！</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <template x-for="list in customLists" :key="list.id">
+                        <div @click="viewingListId = list.id" class="bg-white dark:bg-slate-900 p-6 rounded-[2rem] shadow-sm border border-slate-200 dark:border-slate-800 hover:border-cyan-400 dark:hover:border-cyan-400 cursor-pointer group transition-all hover:shadow-lg relative overflow-hidden">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="p-3 bg-cyan-50 dark:bg-cyan-900/20 text-cyan-500 rounded-2xl group-hover:scale-110 transition-transform">
+                                    <i data-lucide="folder" class="w-6 h-6 fill-current"></i>
+                                </div>
+                                <button @click.stop="deleteCustomList(list.id)" class="text-slate-300 hover:text-red-500 p-2 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition">
+                                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                            <h3 class="text-xl font-black text-slate-800 dark:text-white mb-1" x-text="list.name"></h3>
+                            <p class="text-sm font-bold text-slate-400" x-text="list.recipeIds.length + ' 杯酒譜'"></p>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- 單一酒單詳細模式 -->
+            <div x-show="viewingListId">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                    <div>
+                        <div class="flex items-center gap-3">
+                            <h2 class="text-4xl font-black text-slate-900 dark:text-white" x-text="viewingList?.name"></h2>
+                            <span class="bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400 px-3 py-1 rounded-full text-xs font-black" x-text="viewingListRecipes.length + ' items'"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div x-show="viewingListRecipes.length === 0" class="text-center py-20 bg-white dark:bg-slate-900 rounded-[2.5rem] border-2 border-dashed border-slate-200 dark:border-slate-800">
+                    <i data-lucide="glass-water" class="w-16 h-16 mx-auto text-slate-200 mb-6"></i>
+                    <h3 class="text-2xl font-black text-slate-400">這個酒單是空的</h3>
+                    <button @click="activeTab = 'recipes'" class="text-cyan-600 font-black hover:underline mt-4">前往酒譜庫添加</button>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <template x-for="recipe in viewingListRecipes" :key="recipe.id">
+                        <div @click="openRecipeDetail(recipe)" class="bg-white dark:bg-slate-900 rounded-[2rem] p-6 shadow-sm border border-slate-200 dark:border-slate-800 hover:border-cyan-400 dark:hover:border-cyan-400 transition-all group h-full flex flex-col cursor-pointer hover:scale-[1.02]">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="p-3 bg-cyan-50 dark:bg-cyan-900/20 text-cyan-500 rounded-2xl">
+                                    <i data-lucide="glass-water" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <button @click.stop="toggleRecipeInList(viewingListId, recipe.id)" class="text-red-400 hover:text-red-600 transition p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20" title="從清單移除">
+                                        <i data-lucide="minus-circle" class="w-5 h-5"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <span class="text-[10px] font-bold text-cyan-600 bg-cyan-50 dark:bg-cyan-900/30 dark:text-cyan-400 px-2 py-1 rounded border border-cyan-100 dark:border-cyan-800" x-text="recipe.category"></span>
+                            </div>
+                            <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-1" x-text="recipe.name"></h3>
+                            <p class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-1" x-text="recipe.flavor"></p>
+                            <div class="mt-auto pt-4">
+                                <button class="w-full py-3 rounded-2xl font-black text-sm transition bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">查看詳情</button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
             </div>
           </div>
 
@@ -6545,7 +6904,11 @@
                 <h2 class="text-4xl font-black text-slate-900 dark:text-white">
                   我的私人酒櫃
                 </h2>
-                <div x-show="myBottles.length > 0" class="flex items-center gap-2 mt-2 text-slate-500">
+                <div x-show="myBottles.length > 0" class="flex items-center gap-4 mt-2 text-slate-500">
+                    <button @click="isStatsModalOpen = true" class="flex items-center gap-1 text-amber-600 dark:text-amber-500 font-bold hover:underline">
+                        <i data-lucide="pie-chart" class="w-4 h-4"></i> 查看統計
+                    </button>
+                    <span class="text-slate-300 dark:text-slate-700">|</span>
                     <i data-lucide="piggy-bank" class="w-5 h-5"></i>
                     <span class="font-bold">總資產價值：</span>
                     <span class="font-black text-amber-600 text-lg" x-text="'$' + totalAssetValue.toLocaleString()"></span>
@@ -7142,6 +7505,52 @@
                 </div>
             </div>
 
+            <!-- 個人口味分析 (新增區塊) -->
+            <div x-show="userTasteProfile" class="bg-gradient-to-br from-slate-800 to-slate-900 text-white rounded-[2rem] p-8 shadow-lg relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-10 opacity-10">
+                    <i data-lucide="activity" class="w-64 h-64 text-white"></i>
+                </div>
+                <div class="relative z-10 grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-2 flex items-center gap-3">
+                            <i data-lucide="radar" class="text-amber-500"></i> 味覺分析報告
+                        </h3>
+                        <p class="text-slate-400 mb-6">根據您收藏的 <span class="text-amber-500 font-bold" x-text="favoriteRecipeList.length"></span> 杯最愛酒譜，分析出的個人口味偏好。</p>
+                        
+                        <div class="space-y-4">
+                            <template x-for="(val, key) in userTasteProfile">
+                                <div>
+                                    <div class="flex justify-between text-xs font-bold uppercase tracking-widest mb-1">
+                                        <span x-text="key === 'sweet' ? '甜度 (Sweet)' : key === 'sour' ? '酸度 (Sour)' : key === 'bitter' ? '苦度 (Bitter)' : key === 'boozy' ? '酒精感 (Boozy)' : '複雜度 (Complex)'"></span>
+                                        <span class="text-amber-400" x-text="val"></span>
+                                    </div>
+                                    <div class="w-full bg-slate-700 rounded-full h-2">
+                                        <div class="bg-amber-500 h-2 rounded-full transition-all duration-1000" :style="`width: ${(val/5)*100}%`"></div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="flex justify-center">
+                        <div class="relative w-64 h-64">
+                            <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-2xl">
+                                <g class="text-slate-600 stroke-current stroke-1 fill-none">
+                                    <polygon :points="getRadarGrid(5)" />
+                                    <polygon :points="getRadarGrid(4)" />
+                                    <polygon :points="getRadarGrid(3)" />
+                                    <polygon :points="getRadarGrid(2)" />
+                                    <polygon :points="getRadarGrid(1)" />
+                                </g>
+                                <polygon :points="getRadarPath(userTasteProfile)" class="fill-amber-500/40 stroke-amber-500 stroke-2" />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                <span class="text-[10px] font-black text-amber-500/50 uppercase tracking-widest">Taste Profile</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- 時間軸 -->
             <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-8 shadow-sm border border-slate-200 dark:border-slate-800">
                 <h3 class="text-2xl font-bold mb-6 text-slate-800 dark:text-white flex items-center gap-3">
@@ -7487,7 +7896,7 @@
         <button
           @click="activeTab = tab.id"
           class="flex flex-col items-center gap-1.5 transition"
-          :class="(activeTab === tab.id || (tab.id === 'ingredients' && ['spirits', 'modifiers', 'tools', 'glassware', 'techniques'].includes(activeTab)) || (tab.id === 'laboratory' && ['recipes', 'bar', 'favorites', 'menu'].includes(activeTab))) ? 'text-amber-500 scale-110' : 'text-slate-500'"
+          :class="(activeTab === tab.id || (tab.id === 'ingredients' && ['spirits', 'modifiers', 'tools', 'glassware', 'techniques'].includes(activeTab)) || (tab.id === 'laboratory' && ['recipes', 'bar', 'favorites', 'menu', 'custom_lists'].includes(activeTab))) ? 'text-amber-500 scale-110' : 'text-slate-500'"
         >
           <i :data-lucide="tab.icon" class="w-5 h-5"></i>
           <span
@@ -7523,6 +7932,17 @@
           @submit.prevent="saveBottle()"
           class="p-8 space-y-6 overflow-y-auto custom-scrollbar"
         >
+          <!-- 掃描按鈕區塊 -->
+          <div class="bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl flex items-center justify-between">
+              <div>
+                  <h4 class="font-bold text-slate-700 dark:text-slate-200 text-sm">懶得打字？</h4>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">掃描瓶身條碼自動帶入資訊</p>
+              </div>
+              <button type="button" @click="startScanner()" class="bg-slate-900 dark:bg-slate-700 text-white px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-2 hover:scale-105 transition">
+                  <i data-lucide="scan-barcode" class="w-4 h-4"></i> 掃描條碼
+              </button>
+          </div>
+
           <div class="grid grid-cols-2 gap-6">
             <div class="col-span-2 sm:col-span-1">
               <label
@@ -8179,8 +8599,15 @@
             ></i>
           </button>
           <button
+            @click="openAddToListModal(selectedRecipe)"
+            class="absolute top-8 right-32 z-10 p-2 rounded-full transition text-slate-300 bg-slate-100 dark:bg-slate-800 hover:text-cyan-500 hover:bg-cyan-50 dark:hover:bg-cyan-900/20"
+            title="加入自訂酒單"
+          >
+            <i data-lucide="folder-plus" class="w-5 h-5"></i>
+          </button>
+          <button
             @click="openNoteModal(selectedRecipe)"
-            class="absolute top-8 right-32 z-10 p-2 rounded-full transition text-slate-300 bg-slate-100 dark:bg-slate-800 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20"
+            class="absolute top-8 right-44 z-10 p-2 rounded-full transition text-slate-300 bg-slate-100 dark:bg-slate-800 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20"
             title="評分與筆記"
           >
             <i
@@ -8191,24 +8618,31 @@
           </button>
           <button
             @click="shareRecipe(selectedRecipe)"
-            class="absolute top-8 right-44 z-10 p-2 rounded-full transition text-slate-300 bg-slate-100 dark:bg-slate-800 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+            class="absolute top-8 right-56 z-10 p-2 rounded-full transition text-slate-300 bg-slate-100 dark:bg-slate-800 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20"
             title="分享酒譜"
           >
             <i data-lucide="share-2" class="w-5 h-5"></i>
           </button>
           <button
             @click="generateRecipeImage(selectedRecipe)"
-            class="absolute top-8 right-56 z-10 p-2 rounded-full transition text-slate-300 bg-slate-100 dark:bg-slate-800 hover:text-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20"
+            class="absolute top-8 right-[17rem] z-10 p-2 rounded-full transition text-slate-300 bg-slate-100 dark:bg-slate-800 hover:text-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20"
             title="下載酒譜卡片"
           >
             <i data-lucide="image-down" class="w-5 h-5"></i>
           </button>
           <button
             @click="openJournalModal(selectedRecipe)"
-            class="absolute top-8 right-[17rem] z-10 p-2 rounded-full transition text-slate-300 bg-slate-100 dark:bg-slate-800 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20"
+            class="absolute top-8 right-[20rem] z-10 p-2 rounded-full transition text-slate-300 bg-slate-100 dark:bg-slate-800 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20"
             title="紀錄飲酒"
           >
             <i data-lucide="calendar-plus" class="w-5 h-5"></i>
+          </button>
+          <button
+            @click="cloneRecipe(selectedRecipe); isRecipeModalOpen = false;"
+            class="absolute top-8 right-[23rem] z-10 p-2 rounded-full transition text-slate-300 bg-slate-100 dark:bg-slate-800 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20"
+            title="複製並改良"
+          >
+            <i data-lucide="copy" class="w-5 h-5"></i>
           </button>
           <div class="flex items-center gap-3 mb-6">
             <div class="p-3 bg-amber-100 text-amber-600 rounded-2xl">
@@ -8560,6 +8994,126 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- --- 表單彈窗：加入自訂酒單 --- -->
+    <div
+      x-show="isAddToListModalOpen"
+      class="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-[100] p-4 animate-fade-in"
+      x-cloak
+    >
+      <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] w-full max-w-md shadow-2xl overflow-hidden flex flex-col">
+        <div class="p-8 bg-slate-50 dark:bg-slate-800 border-b dark:border-slate-700 flex justify-between items-center">
+          <h3 class="font-black text-2xl flex items-center gap-3 text-slate-900 dark:text-white">
+            <i data-lucide="folder-plus" class="text-cyan-500"></i> 加入酒單
+          </h3>
+          <button @click="isAddToListModalOpen = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="p-8 space-y-4">
+            <div class="text-center mb-4">
+                <h4 class="text-xl font-black text-slate-800 dark:text-white" x-text="recipeToAdd?.name"></h4>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">選擇要加入的分類</p>
+            </div>
+
+            <div x-show="customLists.length === 0" class="text-center py-8 text-slate-400">
+                <p>尚未建立任何酒單</p>
+                <button @click="isAddToListModalOpen = false; activeTab = 'custom_lists'" class="text-cyan-500 font-bold hover:underline mt-2">前往建立</button>
+            </div>
+
+            <div class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar">
+                <template x-for="list in customLists" :key="list.id">
+                    <label class="flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition" :class="list.recipeIds.includes(recipeToAdd?.id) ? 'border-cyan-500 bg-cyan-50 dark:bg-cyan-900/20' : 'border-slate-100 dark:border-slate-700 hover:border-cyan-200'">
+                        <span class="font-bold text-slate-700 dark:text-slate-200" x-text="list.name"></span>
+                        <div class="relative">
+                            <input type="checkbox" class="sr-only" :checked="list.recipeIds.includes(recipeToAdd?.id)" @change="toggleRecipeInList(list.id, recipeToAdd.id)">
+                            <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center" :class="list.recipeIds.includes(recipeToAdd?.id) ? 'bg-cyan-500 border-cyan-500' : 'border-slate-300 dark:border-slate-600'">
+                                <i x-show="list.recipeIds.includes(recipeToAdd?.id)" data-lucide="check" class="w-4 h-4 text-white"></i>
+                            </div>
+                        </div>
+                    </label>
+                </template>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- --- 彈窗：條碼掃描器 --- -->
+    <div
+      x-show="isScannerOpen"
+      class="fixed inset-0 bg-slate-900/95 backdrop-blur-sm flex items-center justify-center z-[110] p-4 animate-fade-in"
+      x-cloak
+    >
+      <div class="bg-white dark:bg-slate-900 rounded-[2rem] w-full max-w-md shadow-2xl overflow-hidden relative">
+        <div class="p-6 border-b dark:border-slate-800 flex justify-between items-center">
+            <h3 class="font-black text-xl text-slate-900 dark:text-white flex items-center gap-2">
+                <i data-lucide="scan" class="text-amber-500"></i> 掃描條碼
+            </h3>
+            <button @click="stopScanner()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        <div class="p-0 bg-black">
+            <div id="reader" class="w-full h-[300px] md:h-[400px]"></div>
+        </div>
+        <div class="p-4 text-center text-xs text-slate-500 dark:text-slate-400">
+            請將酒瓶條碼對準框線
+        </div>
+      </div>
+    </div>
+
+    <!-- --- 彈窗：庫存統計圖表 --- -->
+    <div
+      x-show="isStatsModalOpen"
+      class="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center z-[100] p-4 animate-fade-in"
+      x-cloak
+    >
+      <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="p-8 bg-slate-50 dark:bg-slate-800 border-b dark:border-slate-700 flex justify-between items-center shrink-0">
+          <h3 class="font-black text-2xl flex items-center gap-3 text-slate-900 dark:text-white">
+            <i data-lucide="pie-chart" class="text-amber-500"></i> 酒櫃庫存統計
+          </h3>
+          <button @click="isStatsModalOpen = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        
+        <div class="p-8 overflow-y-auto custom-scrollbar">
+            <div class="flex flex-col md:flex-row items-center gap-10">
+                <!-- Pie Chart -->
+                <div class="relative w-64 h-64 shrink-0">
+                    <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-xl transform -rotate-90">
+                        <template x-for="slice in inventoryPieSlices" :key="slice.name">
+                            <path :d="slice.path" :fill="slice.color" class="hover:opacity-90 transition-opacity cursor-pointer stroke-white dark:stroke-slate-900 stroke-2" :title="slice.name + ': ' + slice.count + '瓶'"></path>
+                        </template>
+                        <!-- Center Hole (Donut Chart style) -->
+                        <circle cx="50" cy="50" r="25" class="fill-white dark:fill-slate-900" />
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <span class="text-3xl font-black text-slate-800 dark:text-white" x-text="myBottles.length"></span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total</span>
+                    </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="flex-1 w-full grid grid-cols-1 gap-3">
+                    <template x-for="slice in inventoryPieSlices" :key="slice.name">
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
+                            <div class="flex items-center gap-3">
+                                <div class="w-4 h-4 rounded-full shadow-sm" :style="`background-color: ${slice.color}`"></div>
+                                <span class="font-bold text-slate-700 dark:text-slate-200" x-text="slice.name"></span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="text-xs font-bold text-slate-400" x-text="slice.percent + '%'"></span>
+                                <span class="font-black text-slate-800 dark:text-white bg-white dark:bg-slate-700 px-2 py-1 rounded-lg min-w-[2rem] text-center" x-text="slice.count"></span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
       </div>
     </div>
 
